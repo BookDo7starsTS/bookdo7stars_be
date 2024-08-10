@@ -1,6 +1,6 @@
 import express from 'express';
 
-import userController from './controllers/userController.js';
+import userController from './src/controllers/userController.js';
 
 const app = express();
 app.locals.pretty = true;
