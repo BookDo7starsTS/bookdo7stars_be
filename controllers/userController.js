@@ -1,49 +1,23 @@
-var express = require('express');
-//var session = require('express-session');
-var bodyParser = require('body-parser');
-const User = require('../models/user');
-var router = express.Router();
+import express from 'express';
+import bodyParser from 'body-parser';
+import UserDTO from '../dtos/userDto.js';
+import userService from '../services/userService.js';
+
+const router = express.Router();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 router.post('/users', async function (req, res) {
-  //회원가입 로직 만들기
-  const {
-    name,
-    email,
-    password,
-    mobile,
-    policyyn,
-    grade,
-    recipient,
-    post_code,
-    address,
-    address_detail,
-    adminyn,
-    status,
-  } = req.body;
   try {
-    const newUser = await User.create({
-      name,
-      email,
-      password,
-      mobile,
-      policyyn,
-      grade,
-      recipient,
-      post_code,
-      address,
-      address_detail,
-      adminyn,
-      status,
-    });
+    const userDTO = new UserDTO(req.body);
+    const newUser = await userService.createUser(userDTO);
     res.status(201).json({ userId: newUser.id, message: 'User registered successfully' });
   } catch (err) {
     console.error('Error registering user:', err.message);
+    if (err.errors != null) console.error(err.errors[0].message);
     res.status(500).json({ message: 'Error registering user' });
   }
-  res.send(200);
 });
 
-module.exports = router;
+export default router;

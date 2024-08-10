@@ -1,15 +1,15 @@
-const { Pool } = require('pg');
-require('dotenv').config();
-
-const pool = new Pool({
-  user: process.env.DATABASE_USER,
+import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
+dotenv.config();
+const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {
   host: process.env.DATABASE_HOST,
-  database: process.env.DATABASE_NAME,
-  password: process.env.DATABASE_PASSWORD,
-  port: process.env.DATABASE_PORT,
-  ssl: {
-    rejectUnauthorized: false,
+  dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: false,
+      rejectUnauthorized: false, // Set to true if you want to verify the server's certificate
+    },
   },
 });
 
-module.exports = pool;
+export default sequelize;
