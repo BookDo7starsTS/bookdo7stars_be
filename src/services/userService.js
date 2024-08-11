@@ -1,8 +1,12 @@
 import User from '../models/user.js';
 
 class UserService {
-  async createUser(userDTO) {
-    return await User.create(userDTO);
+  async createUser(user) {
+    user.status = 'inactive';
+    user.grade = 'Bronze';
+    user.adminyn = 'N';
+
+    return await User.create(user);
   }
 }
 
