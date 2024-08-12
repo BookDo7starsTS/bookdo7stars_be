@@ -1,6 +1,15 @@
-const express = require('express');
+import express from 'express';
+import setupSwagger from './src/config/swagger.js';
+import userController from './src/controllers/userController.js';
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
+
+setupSwagger(app);
+app.locals.pretty = true;
+
+app.use('/', userController);
 
 app.listen(4000, () => {
   console.log('Server is running on port 4000');
