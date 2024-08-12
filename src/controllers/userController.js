@@ -1,6 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import userService from '../services/userService.js';
+import session from 'express-session';
+import passport from 'passport';
+import OAuth2Strategy from 'passport-oauth2';
+import axios from 'axios';
+import dotenv from 'dotenv';
 
 /**
  * @swagger
@@ -10,9 +15,19 @@ import userService from '../services/userService.js';
  */
 
 const router = express.Router();
+dotenv.config();
+router.use(
+  session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
+router.use(passport.initialize());
+router.use(passport.session());
 
 /**
  * @swagger
@@ -151,7 +166,63 @@ router.post('/users', async function (req, res) {
 router.post('/login', async function (req, res) {
   try {
     const user = await userService.findUser(req.body);
+    req.session.user = user;
     res.status(200).json({ user: { name: user.name, grade: user.grade } });
+  } catch (err) {
+    console.error('Error logging in user', err.message);
+  }
+});
+
+// 세션에 사용자 정보를 저장
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+// 세션에서 사용자 정보를 복구
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+passport.use(
+  new OAuth2Strategy(
+    {
+      authorizationURL: 'https://github.com/login/oauth/authorize',
+      tokenURL: 'https://github.com/login/oauth/access_token',
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: 'http://localhost:4000/auth/github/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      // 여기에서 사용자 정보 확인 및 저장
+      const response = await axios.get('https://api.github.com/user', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(response.data);
+
+      const emailResponse = await axios.get('https://api.github.com/user/emails', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(emailResponse);
+      response.data.email = emailResponse.data[0].email;
+
+      return done(null, response.data);
+    },
+  ),
+);
+
+router.get('/auth/github/callback', passport.authenticate('oauth2', { failureRedirect: '/' }), (req, res) => {
+  // 인증 성공 시 리다이렉트
+  res.redirect('/');
+});
+
+router.get('/session', async function (req, res) {
+  try {
+    const user = req.session.passport.user;
+    res.status(200).json({ user });
   } catch (err) {
     console.error('Error logging in user', err.message);
   }
