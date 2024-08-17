@@ -2,9 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import userService from '../services/userService.js';
 import session from 'express-session';
-import passport from 'passport';
-import OAuth2Strategy from 'passport-oauth2';
-import axios from 'axios';
+import passport from '../passport/oauth.js';
 import dotenv from 'dotenv';
 
 /**
@@ -21,11 +19,16 @@ router.use(
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      secure: false, // HTTPS를 사용하면 true로 설정
+      httpOnly: true,
+      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정
+    },
   }),
 );
 
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.urlencoded({ extended: true }));
 router.use(passport.initialize());
 router.use(passport.session());
 
@@ -163,16 +166,11 @@ router.post('/users', async function (req, res) {
  *                   example: Error signing in a user
  */
 
-router.post('/login', async function (req, res) {
-  try {
-    const user = await userService.findUser(req.body);
-    req.session.user = user;
-    res.status(200).json({ user: { name: user.name, grade: user.grade } });
-  } catch (err) {
-    console.error('Error logging in user', err.message);
-  }
-});
-
+router.post(
+  '/login',
+  passport.authenticate('local', { failureMessage: { message: 'fault' }, successMessage: { message: 'success' } }),
+);
+/*
 // 세션에 사용자 정보를 저장
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -184,6 +182,7 @@ passport.deserializeUser((obj, done) => {
 });
 
 passport.use(
+  'github',
   new OAuth2Strategy(
     {
       authorizationURL: 'https://github.com/login/oauth/authorize',
@@ -212,16 +211,49 @@ passport.use(
       return done(null, response.data);
     },
   ),
+);*/
+
+router.get('/auth/github', passport.authenticate('github'));
+
+router.get(
+  '/auth/github/callback',
+  passport.authenticate('github', { failureMessage: { message: 'fault' }, successMessage: { message: 'success' } }),
+  async (req, res) => {
+    const user = await userService.findUserByEmail(req.session.passport.user);
+    if (!user) {
+      const newUser = {
+        email: req.session.passport.user.email,
+        password: req.session.passport.user.email,
+        name: req.session.passport.user.login,
+      };
+      await userService.createUser(newUser);
+    }
+
+    res.status(201).json(req.session.passport.user);
+  },
 );
 
-router.get('/auth/github/callback', passport.authenticate('oauth2', { failureRedirect: '/' }), (req, res) => {
-  // 인증 성공 시 리다이렉트
-  res.redirect('/');
-});
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureMessage: { message: 'fault' }, successMessage: { message: 'success' } }),
+  async (req, res) => {
+    const user = await userService.findUserByEmail(req.session.passport.user);
+    if (!user) {
+      const newUser = {
+        email: req.session.passport.user.email,
+        password: req.session.passport.user.email,
+        name: req.session.passport.user.login,
+      };
+      await userService.createUser(newUser);
+    }
+
+    res.status(201).json(req.session.passport.user);
+  },
+);
 
 router.get('/session', async function (req, res) {
   try {
-    const user = req.session.passport.user;
+    const user = await userService.findUserByEmail(req.session.passport.user);
     res.status(200).json({ user });
   } catch (err) {
     console.error('Error logging in user', err.message);

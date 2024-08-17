@@ -7,17 +7,23 @@ class UserService {
     inputUser.status = 'inactive';
     inputUser.grade = 'Bronze';
     inputUser.adminyn = 'N';
-
     inputUser.password = await bcrypt.hash(inputUser.password, 10);
-    return await User.create(user);
+    return await User.create(inputUser);
   }
 
-  async findUser(user) {
+  async findUserByEmail(user) {
     const email = user.email;
-    const password = user.password;
-    const userFound = await User.findOne({ where: { email, password } });
+    const userFound = await User.findOne({ where: { email } });
+    return userFound;
+  }
 
-    if (!userFound) {
+  async findUserByPassword(user) {
+    const email = user.email;
+    const userFound = await User.findOne({ where: { email } });
+
+    const isMatch = await bcrypt.compare(user.password, userFound.password);
+
+    if (!isMatch) {
       throw new Error('User not found');
     }
 
