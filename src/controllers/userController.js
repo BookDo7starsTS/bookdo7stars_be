@@ -223,7 +223,7 @@ router.get(
     if (!user) {
       const newUser = {
         email: req.session.passport.user.email,
-        password: req.session.passport.user.email,
+        password: Math.random().toFixed(5).toString(),
         name: req.session.passport.user.login,
       };
       await userService.createUser(newUser);
@@ -241,7 +241,7 @@ router.get(
     if (!user) {
       const newUser = {
         email: req.session.passport.user.email,
-        password: req.session.passport.user.email,
+        password: Math.random().toFixed(5).toString(),
         name: req.session.passport.user.login,
       };
       await userService.createUser(newUser);
