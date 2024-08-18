@@ -270,4 +270,49 @@ router.get('/session', async function (req, res) {
   }
 });
 
+/**
+ * @swagger
+ * /logout:
+ *   post:
+ *     summary: 유저를 로그아웃시킵니다.
+ *     tags: [sign out a user]
+ *     requestBody:
+ *       required: false
+ *     responses:
+ *       200:
+ *         description: 로그아웃 성공했습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 로그아웃 성공 메시지
+ *                   example: Logout successful
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 로그 아웃 오류 메세지
+ *                   example: Error logging out
+ */
+
+router.post('/logout', function (req, res) {
+  req.logout(function (err) {
+    if (err) {
+      return res.status(500).json({ message: 'Error logging out' });
+    }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      return res.status(200).json({ message: 'Logout successful' });
+    });
+  });
+});
+
 export default router;
