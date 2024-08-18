@@ -153,7 +153,7 @@ router.post('/users', async function (req, res) {
  *                   type: string
  *                   description: 회원 등급
  *                   example: Bronze
- *       500:
+ *       401:
  *         description: 서버 오류
  *         content:
  *           application/json:
@@ -163,13 +163,18 @@ router.post('/users', async function (req, res) {
  *                 message:
  *                   type: string
  *                   description: 오류 메세지
- *                   example: Error signing in a user
+ *                   example: User not found or Incorrect Password
  */
 
-router.post(
-  '/login',
-  passport.authenticate('local', { failureMessage: { message: 'fault' }, successMessage: { message: 'success' } }),
-);
+router.post('/login', (req, res) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (!user) {
+      return res.status(401).json({ message: info.message });
+    }
+    return res.status(200).json(user);
+  })(req, res);
+});
+
 /*
 // 세션에 사용자 정보를 저장
 passport.serializeUser((user, done) => {

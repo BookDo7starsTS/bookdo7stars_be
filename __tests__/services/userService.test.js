@@ -123,13 +123,23 @@ describe('findUserByPassword', () => {
     expect(userFound).toEqual(mockUser);
   });
 
+  it('should throw an error when email does not exist', async () => {
+    const mockRequest = { email: 'test@example.com', password: 'password' };
+    User.findOne.mockResolvedValue(null);
+    bcrypt.compare.mockResolvedValue(false); // bcrypt.compare을 모킹하여 false 반환
+
+    await expect(userService.findUserByPassword(mockRequest)).rejects.toThrow('User not found');
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockRequest.email } });
+  });
+
   it('should throw an error when password does not match', async () => {
     const mockUser = { email: 'test@example.com', password: 'hashedPassword' };
     const mockRequest = { email: 'test@example.com', password: 'wrongPassword' };
     User.findOne.mockResolvedValue(mockUser);
     bcrypt.compare.mockResolvedValue(false); // bcrypt.compare을 모킹하여 false 반환
 
-    await expect(userService.findUserByPassword(mockRequest)).rejects.toThrow('User not found');
+    await expect(userService.findUserByPassword(mockRequest)).rejects.toThrow('Incorrect Password');
 
     expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockRequest.email } });
     expect(bcrypt.compare).toHaveBeenCalledWith(mockRequest.password, mockUser.password);

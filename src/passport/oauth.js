@@ -10,8 +10,12 @@ dotenv.config();
 passport.use(
   new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, async (email, password, done) => {
     // Replace this with your user authentication logic
-    const user = await userService.findUserByPassword({ email: email, password: password });
-    return done(null, user);
+    try {
+      const user = await userService.findUserByPassword({ email: email, password: password });
+      return done(null, user);
+    } catch (err) {
+      return done(null, false, err);
+    }
   }),
 );
 

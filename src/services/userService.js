@@ -20,11 +20,14 @@ class UserService {
   async findUserByPassword(user) {
     const email = user.email;
     const userFound = await User.findOne({ where: { email } });
+    if (!userFound) {
+      throw new Error('User not found');
+    }
 
     const isMatch = await bcrypt.compare(user.password, userFound.password);
 
     if (!isMatch) {
-      throw new Error('User not found');
+      throw new Error('Incorrect Password');
     }
 
     return userFound;
