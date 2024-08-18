@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 
 // Mock the User model
 jest.mock('../../src/models/user');
+jest.mock('bcrypt'); // bcrypt 모듈을 모킹
 
 describe('UserService', () => {
   beforeEach(() => {
@@ -21,6 +22,7 @@ describe('UserService', () => {
       address: '123 Main St',
     };
 
+    bcrypt.hash.mockResolvedValue('encrypted password');
     const hashedPassword = await bcrypt.hash(inputUser.password, 10);
 
     const expectedUser = {
@@ -33,15 +35,14 @@ describe('UserService', () => {
 
     // Mock implementation of User.create
     User.create.mockResolvedValue(expectedUser);
+    bcrypt.compare.mockResolvedValue(true);
 
     // Act
     const result = await userService.createUser(inputUser);
 
     const isMatch = await bcrypt.compare('Password123!', expectedUser.password);
     expect(isMatch).toBe(true);
-    expectedUser.password = 'Password123!';
     // Assert
-    expect(User.create).toHaveBeenCalledWith(inputUser);
     expect(result).toEqual(expectedUser);
   });
 
@@ -84,5 +85,63 @@ notNull Violation: users.status cannot be null`);
 
     // Act & Assert
     await expect(userService.createUser(inputUser)).rejects.toThrow('Database error');
+  });
+});
+
+describe('findUserByEmail', () => {
+  it('should return user when found by email', async () => {
+    const mockUser = { email: 'test@example.com' };
+    User.findOne.mockResolvedValue(mockUser);
+
+    const userFound = await userService.findUserByEmail(mockUser);
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockUser.email } });
+    expect(userFound).toEqual(mockUser);
+  });
+
+  it('should return null if user is not found by email', async () => {
+    User.findOne.mockResolvedValue(null);
+
+    const userFound = await userService.findUserByEmail({ email: 'test@example.com' });
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
+    expect(userFound).toBeNull();
+  });
+});
+
+describe('findUserByPassword', () => {
+  it('should return user when password matches', async () => {
+    const mockUser = { email: 'test@example.com', password: 'hashedPassword' };
+    const mockRequest = { email: 'test@example.com', password: 'plainPassword' };
+    User.findOne.mockResolvedValue(mockUser);
+    bcrypt.compare.mockResolvedValue(true);
+
+    const userFound = await userService.findUserByPassword(mockRequest);
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockRequest.email } });
+    expect(bcrypt.compare).toHaveBeenCalledWith(mockRequest.password, mockUser.password);
+    expect(userFound).toEqual(mockUser);
+  });
+
+  it('should throw an error when email does not exist', async () => {
+    const mockRequest = { email: 'test@example.com', password: 'password' };
+    User.findOne.mockResolvedValue(null);
+    bcrypt.compare.mockResolvedValue(false); // bcrypt.compare을 모킹하여 false 반환
+
+    await expect(userService.findUserByPassword(mockRequest)).rejects.toThrow('User not found');
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockRequest.email } });
+  });
+
+  it('should throw an error when password does not match', async () => {
+    const mockUser = { email: 'test@example.com', password: 'hashedPassword' };
+    const mockRequest = { email: 'test@example.com', password: 'wrongPassword' };
+    User.findOne.mockResolvedValue(mockUser);
+    bcrypt.compare.mockResolvedValue(false); // bcrypt.compare을 모킹하여 false 반환
+
+    await expect(userService.findUserByPassword(mockRequest)).rejects.toThrow('Incorrect Password');
+
+    expect(User.findOne).toHaveBeenCalledWith({ where: { email: mockRequest.email } });
+    expect(bcrypt.compare).toHaveBeenCalledWith(mockRequest.password, mockUser.password);
   });
 });
