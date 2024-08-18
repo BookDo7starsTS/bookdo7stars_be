@@ -171,7 +171,12 @@ router.post('/login', (req, res) => {
     if (!user) {
       return res.status(401).json({ message: info.message });
     }
-    return res.status(200).json(user);
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json({ message: err });
+      }
+      return res.status(200).json(user);
+    });
   })(req, res);
 });
 
