@@ -9,17 +9,23 @@ dotenv.config();
 
 cron.schedule('0 12 * * *', async () => {
   console.log('Job running every minute');
-
-  const totalCount = await getAladinNewItemCount();
-  for (let i = 2; i <= Math.ceil(totalCount / 50); i++) {
-    const result = await fetchAladinNewItem(i);
-    if (!result) break;
-  }
+  await getAladinBooks('ItemNewAll');
+  await getAladinBooks('ItemNewSpecial');
+  await getAladinBooks('ItemEditorChoice');
+  await getAladinBooks('Bestseller');
+  await getAladinBooks('BlogBest');
 });
 
-async function getAladinNewItemCount() {
+async function getAladinBooks(queryType) {
+  const totalCount = await getAladinBooksCountByQueryType(queryType);
+  for (let i = 2; i <= Math.ceil(totalCount / 50); i++) {
+    await fetchAladinBooksByQueryType(queryType, i);
+  }
+}
+
+async function getAladinBooksCountByQueryType(queryType) {
   const ttbKey = process.env.ALADIN_TTB_KEY;
-  const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=ItemNewAll&MaxResults=50&start=1&SearchTarget=Book&output=xml&Version=20131101`;
+  const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=1&SearchTarget=Book&output=xml&Version=20131101`;
   try {
     const response = await axios.get(url);
     const parsedData = await parseStringPromise(response.data);
@@ -31,16 +37,16 @@ async function getAladinNewItemCount() {
   }
 }
 
-async function fetchAladinNewItem(page) {
+async function fetchAladinBooksByQueryType(queryType, page) {
   const ttbKey = process.env.ALADIN_TTB_KEY;
-  const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=ItemNewAll&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101`;
-  try {
-    // Fetch the data from the URL
-    const response = await axios.get(url);
+  const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101&Sort=PublishTime`;
+  // Fetch the data from the URL
+  const response = await axios.get(url);
 
-    // Parse the XML data
-    const parsedData = await parseStringPromise(response.data);
-    for (let i = 0; i < parsedData.object.item.length; i++) {
+  // Parse the XML data
+  const parsedData = await parseStringPromise(response.data);
+  for (let i = 0; i < parsedData.object.item.length; i++) {
+    try {
       await sequelize.query(
         `
         INSERT INTO aladinbooks (
@@ -77,14 +83,13 @@ async function fetchAladinNewItem(page) {
             fixedPrice: parsedData.object.item[i].fixedPrice,
             customerReviewRank: parsedData.object.item[i].customerReviewRank,
           },
+          logging: false,
         },
       );
-      console.log('Book inserted successfully');
+      console.log('Success : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
+    } catch (error) {
+      console.error(error.name + ' : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
     }
-    return true;
-    // Send the parsed data as JSON
-  } catch (error) {
-    console.error('Error fetching or parsing data:', error);
-    return false;
   }
+  // Send the parsed data as JSON
 }
