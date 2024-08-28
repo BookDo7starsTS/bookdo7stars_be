@@ -66,7 +66,7 @@ const Book = sequelize.define(
       allowNull: false,
     },
     deleted: {
-      type: DDataTypes.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
   },

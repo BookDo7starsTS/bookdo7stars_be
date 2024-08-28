@@ -1,6 +1,6 @@
 import express from 'express';
 import setupSwagger from './src/config/swagger.js';
-import userController from './src/controllers/userController.js';
+import { userController, bookController } from './src/controllers/index.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import passport from 'passport';
@@ -38,6 +38,7 @@ setupSwagger(app);
 app.locals.pretty = true;
 
 app.use('/user', userController);
+app.use('/book', bookController);
 
 app.listen(4000, () => {
   console.log('Server is running on port 4000');
