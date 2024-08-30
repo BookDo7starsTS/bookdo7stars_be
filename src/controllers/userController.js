@@ -16,7 +16,7 @@ const router = express.Router();
  * /user:
  *   post:
  *     summary: 새로운 유저를 생성합니다.
- *     tags: [Creaate a user]
+ *     tags: [Create a user]
  *     requestBody:
  *       required: true
  *       content:

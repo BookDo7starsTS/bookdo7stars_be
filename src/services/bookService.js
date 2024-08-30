@@ -5,6 +5,11 @@ class BookService {
     const books = await Book.findAll();
     return books;
   }
+
+  async getBookDetailById(id) {
+    const book = await Book.findByPk(id);
+    return book;
+  }
 }
 
 export default new BookService();
