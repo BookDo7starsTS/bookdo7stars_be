@@ -2,7 +2,7 @@ import express from 'express';
 import setupSwagger from './src/config/swagger.js';
 import userController from './src/controllers/userController.js';
 import cors from 'cors';
-
+import './src/job/SaveAladinBooks.js';
 const app = express();
 app.use(
   cors({
