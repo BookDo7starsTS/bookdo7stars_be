@@ -90,4 +90,12 @@ describe('bookService', () => {
 
     spy.mockRestore();
   });
+
+  it('should throw an error message if getBookDetailById failed', async () => {
+    const mockError = new Error('Error loading book detail');
+
+    jest.spyOn(Book, 'findByPk').mockRejectedValue(mockError);
+
+    await expect(bookService.getBookDetailById(1)).rejects.toThrow('Error loading book detail');
+  });
 });
