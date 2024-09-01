@@ -48,7 +48,7 @@ class AladinBooksJob {
 
   async fetchAladinBooksByQueryType(queryType, page) {
     const ttbKey = process.env.ALADIN_TTB_KEY;
-    const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101&Sort=PublishTime`;
+    const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101&Cover=Big`;
     // Fetch the data from the URL
     const response = await axios.get(url);
 
