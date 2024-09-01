@@ -15,6 +15,25 @@ const router = express.Router();
  * /book:
  *   get:
  *     summary: 데이터베이스에 있는 전체 도서 목록을 불러옵니다.
+ *     parameters:
+ *       - in: query
+ *         name: queryType
+ *         schema:
+ *           type: string
+ *           default: ItemNewAll
+ *         description: Filter books by query type.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination.
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *         description: Number of books per page.
  *     tags: [Get all books]
  *     responses:
  *       200:
@@ -59,7 +78,13 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const books = await bookService.getAllBooks();
+    const queryType = req.query.queryType;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 50;
+    let books;
+
+    if (queryType) books = await bookService.getBooksByQueryType(queryType, page, pageSize);
+    else books = await bookService.getAllBooks();
     res.status(200).json({ books: books, message: 'Books loaded successfully' });
   } catch (err) {
     console.error('Error loading books: ', err.message);

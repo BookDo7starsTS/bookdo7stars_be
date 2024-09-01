@@ -59,3 +59,66 @@ describe('bookService', () => {
     expect(result).toEqual(mockBooks);
   });
 });
+
+describe('bookService.getBooksByQueryType', () => {
+  it('should return books filtered by queryType with pagination', async () => {
+    // 가짜 데이터 설정
+    const mockBooks = [
+      { id: 3, title: 'Book 3', queryType: 'ItemNewAll' },
+      { id: 2, title: 'Book 2', queryType: 'ItemNewAll' },
+    ];
+
+    Book.findAll.mockResolvedValue(mockBooks);
+
+    const queryType = 'ItemNewAll';
+    const page = 2;
+    const pageSize = 50;
+
+    // getBooksByQueryType 호출
+    const result = await bookService.getBooksByQueryType(queryType, page, pageSize);
+
+    // Book.findAll이 정확한 매개변수로 호출되었는지 확인
+    expect(Book.findAll).toHaveBeenCalledWith({
+      limit: 50,
+      offset: 50,
+      where: { queryType },
+      order: [['id', 'DESC']],
+    });
+
+    // 결과가 mockBooks와 일치하는지 확인
+    expect(result).toEqual(mockBooks);
+  });
+
+  it('should handle empty results', async () => {
+    // Book.findAll이 빈 배열을 반환하도록 설정
+    Book.findAll.mockResolvedValue([]);
+
+    const queryType = 'ItemNewAll';
+    const page = 3;
+    const pageSize = 17;
+
+    const result = await bookService.getBooksByQueryType(queryType, page, pageSize);
+
+    expect(Book.findAll).toHaveBeenCalledWith({
+      limit: 17,
+      offset: 34,
+      where: { queryType },
+      order: [['id', 'DESC']],
+    });
+
+    // 빈 결과가 반환되는지 확인
+    expect(result).toEqual([]);
+  });
+
+  it('should throw an error if findAll fails', async () => {
+    // Book.findAll에서 에러를 던지도록 설정
+    Book.findAll.mockRejectedValue(new Error('Database error'));
+
+    const queryType = 'ItemNewAll';
+    const page = 1;
+    const pageSize = 2;
+
+    // 에러가 발생하는지 확인
+    await expect(bookService.getBooksByQueryType(queryType, page, pageSize)).rejects.toThrow('Database error');
+  });
+});

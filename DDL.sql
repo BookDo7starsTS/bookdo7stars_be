@@ -38,6 +38,7 @@ CREATE TABLE books (
   deleted BOOLEAN DEFAULT FALSE
 );
 
+
 CREATE TABLE aladinbooks (
   itemId BIGINT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
@@ -59,10 +60,9 @@ CREATE TABLE aladinbooks (
   salesPoint NUMERIC,
   adult BOOLEAN DEFAULT FALSE,
   fixedPrice BOOLEAN DEFAULT FALSE,
-  customerReviewRank NUMERIC
+  customerReviewRank NUMERIC, 
+  queryType VARCHAR(200)
 );
-
-
 
 CREATE OR REPLACE FUNCTION sync_aladinbooks_to_books()
 RETURNS TRIGGER AS $$
@@ -75,7 +75,7 @@ BEGIN
   VALUES (
     NEW.isbn13, NEW.title, NEW.author, NEW.description, NEW.cover, NEW.stockStatus, 
     NEW.categoryId, NEW.mileage, NEW.categoryName, NEW.publisher, NEW.adult, 
-    NEW.fixedPrice, NEW.priceStandard, NEW.priceSales, NEW.customerReviewRank, 'aladinbooks'
+    NEW.fixedPrice, NEW.priceStandard, NEW.priceSales, NEW.customerReviewRank, NEW.queryType
   );
   
   RETURN NEW;
