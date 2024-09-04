@@ -126,6 +126,9 @@ router.get('/detail/:id', async function (req, res) {
   try {
     const id = req.params.id;
     const book = await bookService.getBookDetailById(id);
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
     res.status(200).json({ book, message: 'Book detail loaded successfully' });
   } catch (err) {
     console.error('Error loading book: ', err.message);

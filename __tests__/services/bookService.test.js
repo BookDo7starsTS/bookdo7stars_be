@@ -91,11 +91,19 @@ describe('bookService', () => {
     spy.mockRestore();
   });
 
+  it('should return null if the book is not found', async () => {
+    jest.spyOn(Book, 'findByPk').mockResolvedValue(null);
+
+    const result = await bookService.getBookDetailById(1); // book where id == 1 does not exist
+
+    expect(result).toBeNull();
+  });
+
   it('should throw an error message if getBookDetailById failed', async () => {
     const mockError = new Error('Error loading book detail');
 
     jest.spyOn(Book, 'findByPk').mockRejectedValue(mockError);
 
-    await expect(bookService.getBookDetailById(1)).rejects.toThrow('Error loading book detail');
+    await expect(bookService.getBookDetailById(999)).rejects.toThrow('Error loading book detail');
   });
 });
