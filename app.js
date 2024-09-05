@@ -2,6 +2,7 @@ import express from 'express';
 import setupSwagger from './src/config/swagger.js';
 import { userController, bookController } from './src/controllers/index.js';
 import cors from 'cors';
+import './src/job/SaveAladinBooks.js';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
