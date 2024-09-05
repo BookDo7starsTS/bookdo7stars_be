@@ -59,7 +59,16 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const books = await bookService.getAllBooks();
+    const queryType = req.query.queryType;
+    const pageSize = parseInt(req.query.pageSize) || 15;
+    let books;
+    if (queryType) {
+      const page = parseInt(req.query.page) || 1;
+      books = await bookService.getBooksByQueryType(queryType, page, pageSize);
+    } else {
+      books = await bookService.getAllBooks();
+    }
+
     res.status(200).json({ books: books, message: 'Books loaded successfully' });
   } catch (err) {
     console.error('Error loading books: ', err.message);

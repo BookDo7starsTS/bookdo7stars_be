@@ -61,11 +61,11 @@ class AladinBooksJob {
           INSERT INTO aladinbooks (
             itemId, title, link, author, pubDate, description, isbn, isbn13, priceSales, 
             priceStandard, mallType, stockStatus, mileage, cover, categoryId, categoryName, 
-            publisher, salesPoint, adult, fixedPrice, customerReviewRank
+            publisher, salesPoint, adult, fixedPrice, customerReviewRank, queryType
           ) VALUES (
             :itemId, :title, :link, :author, :pubDate, :description, :isbn, :isbn13, :priceSales, 
             :priceStandard, :mallType, :stockStatus, :mileage, :cover, :categoryId, :categoryName, 
-            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank
+            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank, :queryType
           )
         `,
           {
@@ -91,6 +91,7 @@ class AladinBooksJob {
               adult: parsedData.object.item[i].adult,
               fixedPrice: parsedData.object.item[i].fixedPrice,
               customerReviewRank: parsedData.object.item[i].customerReviewRank,
+              queryType: queryType,
             },
             logging: false,
           },
