@@ -139,4 +139,15 @@ router.get('/detail/:id', async function (req, res) {
   }
 });
 
+router.get('/:groupName', async function (req, res) {
+  try {
+    const group = req.params.groupName;
+
+    const books = await bookService.getBooksByQueryType(group);
+    res.status(200).json({ books, message: 'Books loaded successfully' });
+  } catch (err) {
+    console.error('Error loading best seller: ', err.message);
+  }
+});
+
 export default router;

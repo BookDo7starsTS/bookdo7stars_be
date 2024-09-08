@@ -13,6 +13,20 @@ class BookService {
     }
     return book;
   }
+
+  async getBooksByQueryType(queryType) {
+    const books = await Book.findAll({
+      where: {
+        queryType,
+      },
+    });
+
+    if (books.length === 0) {
+      throw new Error('No books found for this group');
+    }
+
+    return books;
+  }
 }
 
 export default new BookService();
