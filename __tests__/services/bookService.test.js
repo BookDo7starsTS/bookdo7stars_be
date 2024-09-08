@@ -82,7 +82,7 @@ describe('bookService.getBooksByQueryType', () => {
       limit: 50,
       offset: 50,
       where: { queryType },
-      order: [['id', 'DESC']],
+      order: [['pubDate', 'DESC']],
     });
 
     // 결과가 mockBooks와 일치하는지 확인
@@ -103,7 +103,7 @@ describe('bookService.getBooksByQueryType', () => {
       limit: 17,
       offset: 34,
       where: { queryType },
-      order: [['id', 'DESC']],
+      order: [['pubDate', 'DESC']],
     });
 
     // 빈 결과가 반환되는지 확인

@@ -14,14 +14,19 @@ CREATE TABLE users
     adminyn boolean DEFAULT false,
     status VARCHAR(50) NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 )
+
+insert into users (name, email, password, mobile, grade, address, adminyn, status) values ('Bob','bob@gmail.com','$2b$10$Lxlbcu3dLF0TSMSJwEs3Se.Fo8uOnbSvpWnaXKKoJRWo6gDr6V38.','+14144399310','Bronze','W Lakefield Dr.',false,'active');
+insert into users(name, email, password, mobile, grade, address, adminyn, status) values('May','may@gmail.com','$2b$10$QGNZOXbL0OLlkCqfXCgsg.Pn2rI9D/wJBpfaSh9Ap39wQgOQL9Sge','+14144399310','Bronze','30, Seongji-ro 8beon-gil, Busanjin-gu',false,'active')
+insert into users(name, email, password, mobile, grade, address, adminyn, status) values('Mike','mike@gmail.com','$2b$10$fEi0/io6ldjMmfvXDEuB..jZthgimo15aR7PzExuwFMnpsrLwJSB.','+14144399310','Bronze','541 W 78th St',false,'active');
 
 CREATE TABLE books (
   id SERIAL PRIMARY KEY,
   isbn VARCHAR(30) NOT NULL,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
+  pubDate DATE,
   description VARCHAR(255),
   cover VARCHAR(255) NOT NULL,
   "stockStatus" VARCHAR(100),
@@ -35,9 +40,10 @@ CREATE TABLE books (
   "priceSales" NUMERIC,
   "customerReviewRank" NUMERIC,
   "queryType" VARCHAR(100) NOT NULL,
-  deleted BOOLEAN DEFAULT FALSE
+  deleted BOOLEAN DEFAULT FALSE,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE aladinbooks (
   itemId BIGINT PRIMARY KEY,
@@ -61,19 +67,21 @@ CREATE TABLE aladinbooks (
   adult BOOLEAN DEFAULT FALSE,
   fixedPrice BOOLEAN DEFAULT FALSE,
   customerReviewRank NUMERIC, 
-  queryType VARCHAR(200)
+  queryType VARCHAR(200),
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION sync_aladinbooks_to_books()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO books (
-    isbn, title, author, description, cover, "stockStatus", "categoryId", mileage, 
+    isbn, title, author,"pubDate", description, cover, "stockStatus", "categoryId", mileage, 
     "categoryName", publisher, adult, "fixedPrice", "priceStandard", "priceSales", 
     "customerReviewRank", "queryType"
   )
   VALUES (
-    NEW.isbn13, NEW.title, NEW.author, NEW.description, NEW.cover, NEW.stockStatus, 
+    NEW.isbn13, NEW.title, NEW.author, NEW.pubDate, NEW.description, NEW.cover, NEW.stockStatus, 
     NEW.categoryId, NEW.mileage, NEW.categoryName, NEW.publisher, NEW.adult, 
     NEW.fixedPrice, NEW.priceStandard, NEW.priceSales, NEW.customerReviewRank, NEW.queryType
   );

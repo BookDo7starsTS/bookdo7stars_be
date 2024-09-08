@@ -14,7 +14,7 @@ class BookService {
   async getBooksByQueryType(queryType, page, pageSize) {
     const limit = pageSize;
     const offset = (page - 1) * limit;
-    const book = await Book.findAll({ limit, offset, where: { queryType }, order: [['id', 'DESC']] });
+    const book = await Book.findAll({ limit, offset, where: { queryType }, order: [['pubDate', 'DESC']] });
     return book;
   }
 }

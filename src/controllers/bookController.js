@@ -15,25 +15,6 @@ const router = express.Router();
  * /book:
  *   get:
  *     summary: 데이터베이스에 있는 전체 도서 목록을 불러옵니다.
- *     parameters:
- *       - in: query
- *         name: queryType
- *         schema:
- *           type: string
- *           default: ItemNewAll
- *         description: Filter books by query type.
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination.
- *       - in: query
- *         name: pageSize
- *         schema:
- *           type: integer
- *           default: 50
- *         description: Number of books per page.
  *     tags: [Get all books]
  *     responses:
  *       200:
@@ -78,13 +59,7 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const queryType = req.query.queryType;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 50;
-    let books;
-
-    if (queryType) books = await bookService.getBooksByQueryType(queryType, page, pageSize);
-    else books = await bookService.getAllBooks();
+    const books = await bookService.getAllBooks();
     res.status(200).json({ books: books, message: 'Books loaded successfully' });
   } catch (err) {
     console.error('Error loading books: ', err.message);
@@ -154,9 +129,97 @@ router.get('/detail/:id', async function (req, res) {
     res.status(200).json({ book, message: 'Book detail loaded successfully' });
   } catch (err) {
     console.error('Error loading book: ', err.message);
-    if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
-    else res.status(500).json({ message: 'Error loading book detail' });
+    if (err.errors != null && err.errors[0].message != null) {
+      return res.status(500).json({ message: err.errors[0].message });
+    }
+    if (err.message === 'Book not found') {
+      return res.status(404).json({ message: err.message });
+    }
+    res.status(500).json({ message: 'Error loading book detail' });
   }
 });
 
+/**
+ * @swagger
+ * /book/{group-name}:
+ *   get:
+ *     summary: 데이터베이스에 있는 그룹 도서 목록을 불러옵니다.
+ *     parameters:
+ *       - in: path
+ *         name: group-name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The name of the book group (ItemNewAll, ItemNewSpecial, ItemEditorChoice, Bestseller, BlogBest)
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination.
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *         description: Number of books per page.
+ *     tags: [Get books by group name]
+ *     responses:
+ *       200:
+ *         description: 전체 도서 목록이 성공적으로 불려졌습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books:
+ *                   type: array
+ *                   description: book 객체의 배열
+ *                   example: [{
+ *                      "title": "book1",
+ *                      "isbn": "xxx",
+ *                      "author": "author1",
+ *                      "cover": "cover1",
+ *                      "priceStandard": 100
+ *                    },
+ *                    {
+ *                      "title": "book2",
+ *                      "isbn": "xxx2",
+ *                      "author": "author2",
+ *                      "cover": "cover2",
+ *                      "priceStandard": 100
+ *                    }]
+ *                 message:
+ *                   type: string
+ *                   description: 응답 메세지
+ *                   example: Books loaded successfully
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 오류 메세지
+ *                   example: Error loading Books
+ */
+router.get('/:groupName', async function (req, res) {
+  try {
+    const groupName = req.params.groupName;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 20;
+    let books;
+
+    if (!groupName) res.status(500).json({ message: 'need group Name' });
+
+    books = await bookService.getBooksByQueryType(groupName, page, pageSize);
+    res.status(200).json({ books: books, message: 'Books loaded successfully' });
+  } catch (err) {
+    console.error('Error loading books: ', err.message);
+    if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
+    else res.status(500).json({ message: 'Error loading books' });
+  }
+});
 export default router;
