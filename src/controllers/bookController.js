@@ -139,4 +139,31 @@ router.get('/detail/:id', async function (req, res) {
   }
 });
 
+router.get('/:groupName', async function (req, res) {
+  try {
+    const groupName = req.params.groupName;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 20;
+
+    if (!groupName) {
+      return res.status(400).json({ massage: 'Group name is required' });
+    }
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ message: 'Invalid page number' });
+    }
+    if (isNaN(pageSize) || pageSize < 1) {
+      return res.status(400).json({ message: 'Invalid page size' });
+    }
+
+    const books = await bookService.getBooksByQueryType(groupName, page, pageSize);
+
+    return res.status(200).json({ books, message: 'Books loaded successfully' });
+  } catch (error) {
+    console.log('Error loading books: ', error.message);
+
+    const errorMessage = error.errors?.[0]?.message || 'Error loading books';
+    return res.status(500).json({ message: errorMessage });
+  }
+});
+
 export default router;
