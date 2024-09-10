@@ -142,16 +142,28 @@ router.get('/detail/:id', async function (req, res) {
 router.get('/:groupName', async function (req, res) {
   try {
     const groupName = req.params.groupName;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 20;
+
+    // 쿼리 파라미터가 없거나 undefined일 때
+    let page = parseInt(req.query.page) || 1;
+    let pageSize = parseInt(req.query.pageSize) || 20;
 
     if (!groupName) {
       return res.status(400).json({ massage: 'Group name is required' });
     }
-    if (isNaN(page) || page < 1) {
+
+    // page, pageSize가 0이면 각각 1과 20으로 설정
+    if (page === 0) {
+      page = 1;
+    }
+    if (pageSize === 0) {
+      pageSize = 20;
+    }
+
+    // page, pageSize가 음수인 경우 처리
+    if (page < 0) {
       return res.status(400).json({ message: 'Invalid page number' });
     }
-    if (isNaN(pageSize) || pageSize < 1) {
+    if (pageSize < 0) {
       return res.status(400).json({ message: 'Invalid page size' });
     }
 
