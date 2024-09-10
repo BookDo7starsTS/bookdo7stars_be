@@ -141,12 +141,24 @@ router.get('/detail/:id', async function (req, res) {
 
 router.get('/:groupName', async function (req, res) {
   try {
-    const group = req.params.groupName;
+    const groupName = req.params.groupName;
+    const { page, pageSize } = req.query;
 
-    const books = await bookService.getBooksByQueryType(group);
+    const books = await bookService.getBooksByQueryType(groupName, page, pageSize);
+
     res.status(200).json({ books, message: 'Books loaded successfully' });
   } catch (err) {
     console.error('Error loading best seller: ', err.message);
+
+    if (err.message === 'Invalid query type') {
+      return res.status(400).json({ message: err.message });
+    }
+
+    if (err.errors && err.errors.length > 0 && err.errors[0].message) {
+      return res.status(500).json({ message: err.errors[0].message });
+    }
+
+    res.status(500).json({ message: 'Error loading book detail' });
   }
 });
 

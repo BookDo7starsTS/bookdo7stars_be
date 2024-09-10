@@ -14,16 +14,22 @@ class BookService {
     return book;
   }
 
-  async getBooksByQueryType(queryType) {
+  async getBooksByQueryType(queryType, page = 1, pageSize = 20) {
+    if (!queryType) {
+      throw new Error('Invalid query type');
+    }
+
+    page = Number.isInteger(parseInt(page)) && parseInt(page) > 0 ? parseInt(page) : 1;
+    pageSize = Number.isInteger(parseInt(pageSize)) && parseInt(pageSize) > 0 ? parseInt(pageSize) : 20;
+
     const books = await Book.findAll({
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
       where: {
         queryType,
       },
+      order: [['id', 'DESC']],
     });
-
-    if (books.length === 0) {
-      throw new Error('No books found for this group');
-    }
 
     return books;
   }
