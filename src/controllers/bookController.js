@@ -139,9 +139,67 @@ router.get('/detail/:id', async function (req, res) {
   }
 });
 
+/**
+ * @swagger
+ * /book/{groupName}:
+ *   get:
+ *     summary: 유저가 요청한 도서 그룹의 책들을 DB에서 불러옵니다.
+ *     tags: [Get books by query type]
+ *
+ *     parameters:
+ *       - name: groupName
+ *         in: path
+ *         description: The type of book group to fetch, such as 'Bestseller' or 'itemNewAll'
+ *         required: true
+ *         schema:
+ *           type: string
+ *
+ *     responses:
+ *       200:
+ *         description: 유저가 요청한 그룹의 도서 20권을 성공적으로 불러왔습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books:
+ *                   type: array
+ *                   description: book 객체의 배열
+ *                   example: [{
+ *                      "title": "book1",
+ *                      "isbn": "xxx",
+ *                      "author": "author1",
+ *                      "cover": "cover1",
+ *                      "priceStandard": 100
+ *                    },
+ *                    {
+ *                      "title": "book2",
+ *                      "isbn": "xxx2",
+ *                      "author": "author2",
+ *                      "cover": "cover2",
+ *                      "priceStandard": 100
+ *                    }]
+ *                 message:
+ *                   type: string
+ *                   description: 응답 메세지
+ *                   example: Books by queryType loaded successfully
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 오류 메세지
+ *                   example: Error loading books by query type
+ */
+
 router.get('/:groupName', async function (req, res) {
   try {
     const groupName = req.params.groupName;
+    console.log(groupName);
     const { page, pageSize } = req.query;
 
     const books = await bookService.getBooksByQueryType(groupName, page, pageSize);
