@@ -8,8 +8,10 @@ describe('bookService', () => {
   let req;
   beforeEach(() => {
     req = {
+      params: {
+        groupName: 'BlogBest',
+      },
       query: {
-        queryType: 'BlogBest',
         page: '1',
         pageSize: '1',
       },
@@ -26,17 +28,18 @@ describe('bookService', () => {
     expect(result).toEqual(mockBooks);
   });
   it('should load only blogbest books in Book table in the database, when the queryType is BlogBest.', async () => {
-    const queryType = req.query.queryType;
+    const groupName = req.params.groupName;
+    const { page, pageSize } = req.query;
 
     Book.findAll.mockResolvedValue(mockBooks);
 
-    const result = await bookService.getBooksByQueryType(queryType);
+    const result = await bookService.getBooksByQueryType(groupName, page, pageSize);
 
     expect(result).toEqual(mockBooks);
   });
 
   it('should give you only one BlogBest book, when pageSize(limit) is 1', async () => {
-    const queryType = req.query.queryType;
+    const groupName = req.params.groupName;
     const page = parseInt(req.query.page, 10);
     const pageSize = parseInt(req.query.pageSize, 10);
 
@@ -44,7 +47,7 @@ describe('bookService', () => {
       return Promise.resolve(mockBooks.slice(offset, offset + limit));
     });
 
-    const result = await bookService.getBooksByQueryType(queryType, page, pageSize);
+    const result = await bookService.getBooksByQueryType(groupName, page, pageSize);
 
     expect(result).toEqual(mockBooks.slice(0, 1));
     expect(result.length).toEqual(1);
