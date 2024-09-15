@@ -204,9 +204,9 @@ router.get('/:groupName', async function (req, res) {
 
     const books = await bookService.getBooksByQueryType(groupName, page, pageSize);
 
-    res.status(200).json({ books, message: 'Books loaded successfully' });
+    res.status(200).json({ books, message: 'Books by group name loaded successfully' });
   } catch (err) {
-    console.error('Error loading best seller: ', err.message);
+    console.error('Error loading books by group name: ', err.message);
 
     if (err.message === 'Invalid query type') {
       return res.status(400).json({ message: err.message });
@@ -216,7 +216,7 @@ router.get('/:groupName', async function (req, res) {
       return res.status(500).json({ message: err.errors[0].message });
     }
 
-    res.status(500).json({ message: 'Error loading book detail' });
+    res.status(500).json({ message: 'Error loading books by group name' });
   }
 });
 
