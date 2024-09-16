@@ -199,7 +199,6 @@ router.get('/detail/:id', async function (req, res) {
 router.get('/:groupName', async function (req, res) {
   try {
     const groupName = req.params.groupName;
-    console.log(groupName);
     const { page, pageSize } = req.query;
 
     const books = await bookService.getBooksByQueryType(groupName, page, pageSize);

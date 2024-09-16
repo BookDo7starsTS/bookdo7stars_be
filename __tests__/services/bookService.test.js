@@ -172,13 +172,24 @@ describe('bookService', () => {
     await expect(bookService.getBooksByQueryType('', 1, 20)).rejects.toThrow('Invalid query type');
   });
 
-  it('should throw an error message if getBooksByQueryType failed', async () => {
-    const mockError = new Error('Error loading books by group name');
+  it('should return an empty array if no books are found', async () => {
+    Book.findAll.mockResolvedValue([]);
+    const result = await bookService.getBooksByQueryType('queryType1', 1, 20);
 
-    jest.spyOn(Book, 'findAll').mockRejectedValue(mockError);
-
-    await expect(bookService.getBooksByQueryType('queryType1', 1, 20)).rejects.toThrow(
-      'Error loading books by group name',
+    expect(Book.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { queryType: 'queryType1' },
+        limit: 20,
+        offset: 0,
+      }),
     );
+
+    expect(result).toEqual([]);
+  });
+
+  it('should throw an error if getting books from DB fails', async () => {
+    Book.findAll.mockRejectedValue(new Error('Database error'));
+
+    await expect(bookService.getBooksByQueryType('queryType1', 1, 20)).rejects.toThrow('Database error');
   });
 });
