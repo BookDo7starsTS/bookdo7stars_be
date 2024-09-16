@@ -19,16 +19,21 @@ class BookService {
       throw new Error('Invalid query type');
     }
 
-    page = Number.isInteger(parseInt(page)) && parseInt(page) > 0 ? parseInt(page) : 1;
-    pageSize = Number.isInteger(parseInt(pageSize)) && parseInt(pageSize) > 0 ? parseInt(pageSize) : 20;
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+
+    page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
+
+    const order = queryType === 'Bestseller' ? [['salespoint', 'DESC']] : [['pubDate', 'DESC']];
 
     const books = await Book.findAll({
-      limit: pageSize,
-      offset: (page - 1) * pageSize,
       where: {
         queryType,
       },
-      order: [['id', 'DESC']],
+      order,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
     });
 
     return books;

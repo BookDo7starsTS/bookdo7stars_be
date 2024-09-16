@@ -143,9 +143,10 @@ router.get('/detail/:id', async function (req, res) {
  * @swagger
  * /book/{groupName}:
  *   get:
- *     summary: 유저가 요청한 도서 그룹의 책들을 DB에서 불러옵니다.
  *     tags: [Get books by query type]
- *
+ *     summary: Find books by query type
+ *     description: Returns books by query type from the database.
+ *     operationId: getBooksByQueryType
  *     parameters:
  *       - name: groupName
  *         in: path
@@ -153,10 +154,23 @@ router.get('/detail/:id', async function (req, res) {
  *         required: true
  *         schema:
  *           type: string
- *
+ *       - name: page
+ *         in: query
+ *         description: Page number to load.
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *           default: 1
+ *       - name: pageSize
+ *         in: query
+ *         description: Number of items per page.
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *           default: 20
  *     responses:
  *       200:
- *         description: 유저가 요청한 그룹의 도서 20권을 성공적으로 불러왔습니다.
+ *         description: Books by queryType loaded successfully
  *         content:
  *           application/json:
  *             schema:
@@ -164,7 +178,7 @@ router.get('/detail/:id', async function (req, res) {
  *               properties:
  *                 books:
  *                   type: array
- *                   description: book 객체의 배열
+ *                   description: array of book objects
  *                   example: [{
  *                      "title": "book1",
  *                      "isbn": "xxx",
@@ -181,10 +195,10 @@ router.get('/detail/:id', async function (req, res) {
  *                    }]
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: response message
  *                   example: Books by queryType loaded successfully
- *       500:
- *         description: 서버 오류
+ *       400:
+ *         description: Invalid query type supplied
  *         content:
  *           application/json:
  *             schema:
@@ -192,7 +206,17 @@ router.get('/detail/:id', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   example: Invalid query type
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
  *                   example: Error loading books by query type
  */
 
