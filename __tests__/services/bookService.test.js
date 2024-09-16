@@ -106,4 +106,146 @@ describe('bookService', () => {
 
     await expect(bookService.getBookDetailById(1)).rejects.toThrow('Error loading book detail');
   });
+
+  it('should load books by queryType in Book table in the database and order by pubDate for non-Bestseller queryType', async () => {
+    const mockBooks = [
+      {
+        id: '1',
+        isbn: 'xxx',
+        title: 'book1',
+        author: 'author1',
+        description: 'description1',
+        cover: 'cover1',
+        stockStatus: 'xx',
+        categoryId: 'id1',
+        mileage: 1,
+        categoryName: 'cat1',
+        publisher: 'publisher1',
+        adult: true,
+        fixedPrice: true,
+        priceStandard: 100,
+        priceSales: 90,
+        customerReviewRank: 10,
+        queryType: 'queryType1',
+        deleted: false,
+      },
+      {
+        id: '2',
+        isbn: 'xxx2',
+        title: 'book2',
+        author: 'author2',
+        description: 'description2',
+        cover: 'cover2',
+        stockStatus: 'xx2',
+        categoryId: 'id2',
+        mileage: 2,
+        categoryName: 'cat1',
+        publisher: 'publisher2',
+        adult: true,
+        fixedPrice: true,
+        priceStandard: 100,
+        priceSales: 90,
+        customerReviewRank: 10,
+        queryType: 'queryType1',
+        deleted: false,
+      },
+    ];
+
+    Book.findAll.mockResolvedValue(mockBooks);
+
+    const result = await bookService.getBooksByQueryType('queryType1', 1, 20);
+
+    expect(Book.findAll).toHaveBeenCalledWith({
+      where: { queryType: 'queryType1' },
+      limit: 20,
+      offset: 0,
+      order: [['pubDate', 'DESC']],
+    });
+
+    expect(result).toEqual(mockBooks);
+  });
+
+  it('should load books by queryType and order by salespoint when queryType is Bestseller', async () => {
+    const mockBooks = [
+      {
+        id: '1',
+        isbn: 'xxx',
+        title: 'book1',
+        author: 'author1',
+        description: 'description1',
+        cover: 'cover1',
+        stockStatus: 'xx',
+        categoryId: 'id1',
+        mileage: 1,
+        categoryName: 'cat1',
+        publisher: 'publisher1',
+        adult: true,
+        fixedPrice: true,
+        priceStandard: 100,
+        priceSales: 90,
+        customerReviewRank: 10,
+        queryType: 'Bestseller',
+        deleted: false,
+      },
+      {
+        id: '2',
+        isbn: 'xxx2',
+        title: 'book2',
+        author: 'author2',
+        description: 'description2',
+        cover: 'cover2',
+        stockStatus: 'xx2',
+        categoryId: 'id2',
+        mileage: 2,
+        categoryName: 'cat1',
+        publisher: 'publisher2',
+        adult: true,
+        fixedPrice: true,
+        priceStandard: 100,
+        priceSales: 90,
+        customerReviewRank: 10,
+        queryType: 'Bestseller',
+        deleted: false,
+      },
+    ];
+
+    Book.findAll.mockResolvedValue(mockBooks);
+
+    const result = await bookService.getBooksByQueryType('Bestseller', 1, 20);
+
+    expect(Book.findAll).toHaveBeenCalledWith({
+      where: { queryType: 'Bestseller' },
+      limit: 20,
+      offset: 0,
+      order: [['salespoint', 'DESC']],
+    });
+
+    expect(result).toEqual(mockBooks);
+  });
+
+  it('should throw an error if queryType is not provided', async () => {
+    await expect(bookService.getBooksByQueryType(null, 1, 20)).rejects.toThrow('Invalid query type');
+
+    await expect(bookService.getBooksByQueryType('', 1, 20)).rejects.toThrow('Invalid query type');
+  });
+
+  it('should return an empty array if no books are found', async () => {
+    Book.findAll.mockResolvedValue([]);
+    const result = await bookService.getBooksByQueryType('queryType1', 1, 20);
+
+    expect(Book.findAll).toHaveBeenCalledWith({
+      where: { queryType: 'queryType1' },
+      limit: 20,
+      offset: 0,
+      order: [['pubDate', 'DESC']],
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  it('should throw an error if getting books from DB fails', async () => {
+    Book.findAll.mockRejectedValue(new Error('Database error'));
+
+    await expect(bookService.getBooksByQueryType('queryType1', 1, 20)).rejects.toThrow('Database error');
+  });
 });
