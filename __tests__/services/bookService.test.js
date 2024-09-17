@@ -126,7 +126,7 @@ describe('bookService', () => {
         priceStandard: 100,
         priceSales: 90,
         customerReviewRank: 10,
-        queryType: 'queryType1',
+        queryType: 'ItemNewAll',
         deleted: false,
       },
       {
@@ -146,17 +146,17 @@ describe('bookService', () => {
         priceStandard: 100,
         priceSales: 90,
         customerReviewRank: 10,
-        queryType: 'queryType1',
+        queryType: 'ItemNewAll',
         deleted: false,
       },
     ];
 
     Book.findAll.mockResolvedValue(mockBooks);
 
-    const result = await bookService.getBooksByQueryType('queryType1', 1, 20);
+    const result = await bookService.getBooksByQueryType('ItemNewAll', 1, 20);
 
     expect(Book.findAll).toHaveBeenCalledWith({
-      where: { queryType: 'queryType1' },
+      where: { queryType: 'ItemNewAll' },
       limit: 20,
       offset: 0,
       order: [['pubDate', 'DESC']],
@@ -224,17 +224,21 @@ describe('bookService', () => {
   });
 
   it('should throw an error if queryType is not provided', async () => {
-    await expect(bookService.getBooksByQueryType(null, 1, 20)).rejects.toThrow('Invalid query type');
+    await expect(bookService.getBooksByQueryType(null, 1, 20)).rejects.toThrow('Query type is missing');
+    await expect(bookService.getBooksByQueryType('', 1, 20)).rejects.toThrow('Query type is missing');
+    await expect(bookService.getBooksByQueryType(undefined, 1, 20)).rejects.toThrow('Query type is missing');
+  });
 
-    await expect(bookService.getBooksByQueryType('', 1, 20)).rejects.toThrow('Invalid query type');
+  it('should throw an error if an invalid queryType is provided', async () => {
+    await expect(bookService.getBooksByQueryType('InvalidType', 1, 20)).rejects.toThrow('Invalid query type');
   });
 
   it('should return an empty array if no books are found', async () => {
     Book.findAll.mockResolvedValue([]);
-    const result = await bookService.getBooksByQueryType('queryType1', 1, 20);
+    const result = await bookService.getBooksByQueryType('ItemNewAll', 1, 20);
 
     expect(Book.findAll).toHaveBeenCalledWith({
-      where: { queryType: 'queryType1' },
+      where: { queryType: 'ItemNewAll' },
       limit: 20,
       offset: 0,
       order: [['pubDate', 'DESC']],
@@ -246,6 +250,6 @@ describe('bookService', () => {
   it('should throw an error if getting books from DB fails', async () => {
     Book.findAll.mockRejectedValue(new Error('Database error'));
 
-    await expect(bookService.getBooksByQueryType('queryType1', 1, 20)).rejects.toThrow('Database error');
+    await expect(bookService.getBooksByQueryType('Bestseller', 1, 20)).rejects.toThrow('Database error');
   });
 });
