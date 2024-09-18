@@ -16,6 +16,12 @@ class BookService {
 
   async getBooksByQueryType(queryType, page = 1, pageSize = 20) {
     if (!queryType) {
+      throw new Error('Query type is missing');
+    }
+
+    const validQueryTypes = new Set(['BlogBest', 'ItemNewSpecial', 'Bestseller', 'ItemNewAll']);
+
+    if (!validQueryTypes.has(queryType)) {
       throw new Error('Invalid query type');
     }
 
