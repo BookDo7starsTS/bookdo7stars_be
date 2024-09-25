@@ -27,6 +27,7 @@ class AladinBooksJob {
 
   async getAladinBooks(queryType) {
     const totalCount = await this.getAladinBooksCountByQueryType(queryType);
+    console.log('totalCount? ', queryType, ' | ', totalCount);
     for (let i = 1; i <= Math.ceil(totalCount / 50); i++) {
       await this.fetchAladinBooksByQueryType(queryType, i);
     }
@@ -54,18 +55,19 @@ class AladinBooksJob {
 
     // Parse the XML data
     const parsedData = await parseStringPromise(response.data);
+
     for (let i = 0; i < parsedData.object.item.length; i++) {
       try {
         await sequelize.query(
           `
           INSERT INTO aladinbooks (
-            itemId, title, link, author, pubDate, description, isbn, isbn13, priceSales, 
-            priceStandard, mallType, stockStatus, mileage, cover, categoryId, categoryName, 
-            publisher, salesPoint, adult, fixedPrice, customerReviewRank
+            "itemId", title, link, author, "pubDate", description, isbn, isbn13, "priceSales", 
+            "priceStandard", "mallType", "stockStatus", mileage, cover, "categoryId", "categoryName", 
+            publisher, "salesPoint", adult, "fixedPrice", "customerReviewRank", "queryType"
           ) VALUES (
             :itemId, :title, :link, :author, :pubDate, :description, :isbn, :isbn13, :priceSales, 
             :priceStandard, :mallType, :stockStatus, :mileage, :cover, :categoryId, :categoryName, 
-            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank
+            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank, :queryType
           )
         `,
           {
@@ -91,13 +93,15 @@ class AladinBooksJob {
               adult: parsedData.object.item[i].adult,
               fixedPrice: parsedData.object.item[i].fixedPrice,
               customerReviewRank: parsedData.object.item[i].customerReviewRank,
+              queryType: queryType,
             },
             logging: false,
           },
         );
         console.log('Success : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
       } catch (error) {
-        console.error(error.name + ' : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
+        console.error(error);
+        // console.error(error.name + ' : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
       }
     }
     // Send the parsed data as JSON

@@ -1,3 +1,4 @@
+import { QueryType } from '../enum/queryTypeEnum.js';
 import Book from '../models/book.js';
 
 class BookService {
@@ -22,6 +23,10 @@ class BookService {
     const validQueryTypes = new Set(['BlogBest', 'ItemNewSpecial', 'Bestseller', 'ItemNewAll']);
 
     if (!validQueryTypes.has(queryType)) {
+      throw new Error('Invalid query type');
+    }
+
+    if (!Object.values(QueryType).includes(queryType)) {
       throw new Error('Invalid query type');
     }
 
