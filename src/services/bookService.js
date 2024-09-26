@@ -1,8 +1,18 @@
 import Book from '../models/book.js';
+import BookQueryType from '../models/bookQueryType.js';
 
 class BookService {
-  async getAllBooks() {
-    const books = await Book.findAll();
+  async getAllBooks(page = 1, pageSize = 50) {
+    const order = [
+      ['title', 'ASC'],
+      ['author', 'DESC'],
+    ];
+
+    const books = await Book.findAll({
+      order,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
     return books;
   }
 
@@ -26,11 +36,12 @@ class BookService {
     pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
 
     const order = queryType === 'Bestseller' ? [['salespoint', 'DESC']] : [['pubDate', 'DESC']];
-
     const books = await Book.findAll({
-      where: {
-        queryType,
-      },
+      include: [{
+          model: BookQueryType,
+          where: { query_type: queryType }, // Filter by query_type
+          required: true, // INNER JOIN
+      }],
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
