@@ -27,7 +27,7 @@ class BookService {
 
   async getBooksByQueryType(queryType, page = 1, pageSize = 20) {
     if (!queryType) {
-      throw new Error('Invalid query type');
+      throw new Error('Query type is missing');
     }
 
     if (!Object.values(QueryType).includes(queryType)) {

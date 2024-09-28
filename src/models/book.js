@@ -89,7 +89,7 @@ const Book = sequelize.define(
 );
 
 Book.associate = function (models) {
-  Book.hasMany(models.BookQueryType, {
+  Book.hasMany(BookQueryType, {
     foreignKey: 'book_id',
     sourceKey: 'id',
   });
