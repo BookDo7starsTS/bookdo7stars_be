@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
-import Book from './book.js';
 
 const BookQueryType = sequelize.define(
   'book_query_types',

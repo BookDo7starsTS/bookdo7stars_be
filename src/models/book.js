@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
-import BookQueryType from './bookQueryType.js';
 
 const Book = sequelize.define(
   'books',
@@ -87,6 +86,5 @@ const Book = sequelize.define(
     timestamps: false,
   },
 );
-
 
 export default Book;
