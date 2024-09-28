@@ -9,7 +9,7 @@ class BookService {
       ['author', 'DESC'],
     ];
 
-    const books = await Book.findAll({
+    const books = await Book.findAndCountAll({
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
