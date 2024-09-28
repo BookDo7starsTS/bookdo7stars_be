@@ -40,7 +40,7 @@ class BookService {
     page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
     pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
 
-    const order = queryType === 'Bestseller' ? [['salespoint', 'DESC']] : [['pubDate', 'DESC']];
+    const order = queryType === 'Bestseller' ? [['sales_point', 'DESC']] : [['pub_date', 'DESC']];
     const books = await Book.findAll({
       include: [{
           model: BookQueryType,

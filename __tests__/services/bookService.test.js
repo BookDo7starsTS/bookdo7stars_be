@@ -227,7 +227,7 @@ describe('bookService', () => {
       }],
       limit: 20,
       offset: 0,
-      order: [['pubDate', 'DESC']],
+      order: [['pub_date', 'DESC']],
     });
 
     expect(result).toEqual(mockBooks);
@@ -289,7 +289,7 @@ describe('bookService', () => {
       }],
       limit: 20,
       offset: 0,
-      order: [['salespoint', 'DESC']],
+      order: [['sales_point', 'DESC']],
     });
 
     expect(result).toEqual(mockBooks);
@@ -313,7 +313,7 @@ describe('bookService', () => {
       }],
       limit: 20,
       offset: 0,
-      order: [['pubDate', 'DESC']],
+      order: [['pub_date', 'DESC']],
     });
 
     expect(result).toEqual([]);
