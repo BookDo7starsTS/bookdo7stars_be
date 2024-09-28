@@ -120,7 +120,7 @@ class AladinBooksJob {
         );
         console.log('Success : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
       } catch (error) {
-        console.error(error.name + ' : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
+        console.error(error);
       }
     }
     // Send the parsed data as JSON

@@ -1,5 +1,6 @@
 import Book from '../models/book.js';
 import BookQueryType from '../models/bookQueryType.js';
+import { QueryType } from '../enum/queryTypeEnum.js';
 
 class BookService {
   async getAllBooks(page = 1, pageSize = 50) {
@@ -29,6 +30,10 @@ class BookService {
       throw new Error('Invalid query type');
     }
 
+    if (!Object.values(QueryType).includes(queryType)) {
+      throw new Error('Invalid query type');
+    }
+    
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
 

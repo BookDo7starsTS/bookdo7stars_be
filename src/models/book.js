@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import BookQueryType from './bookQueryType.js';
+
 const Book = sequelize.define(
   'books',
   {
@@ -51,6 +52,10 @@ const Book = sequelize.define(
     publisher: {
       type: DataTypes.STRING(200),
     },
+    salesPoint: {
+      type: DataTypes.NUMBER,
+      field: 'sales_point',
+    },
     adult: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -79,25 +84,16 @@ const Book = sequelize.define(
     },
   },
   {
-    timestamps: false, // Since we are managing `created_at` and `updated_at` manually
+    timestamps: false,
   },
 );
-/*
-Book.associate = (models) => {
-  Book.hasMany(models.BookQueryType, {
-      foreignKey: 'book_id',
-      sourceKey: 'id',
-  });
-};*/
 
-Book.hasMany(BookQueryType, {
-  foreignKey: 'book_id',
-  sourceKey: 'id',
-});
-/*
-BookQueryType.belongsTo(Book, {
-  foreignKey: 'book_id',
-  targetKey: 'id',
-});*/
+Book.associate = function (models) {
+  Book.hasMany(models.BookQueryType, {
+    foreignKey: 'book_id',
+    sourceKey: 'id',
+  });
+}
+
 
 export default Book;
