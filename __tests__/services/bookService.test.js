@@ -191,7 +191,6 @@ describe('bookService', () => {
         priceSales: 90,
         customerReviewRank: 10,
         queryType: 'ItemNewAll',
-        queryType: 'ItemNewAll',
         deleted: false,
       },
       {
@@ -211,7 +210,6 @@ describe('bookService', () => {
         priceStandard: 100,
         priceSales: 90,
         customerReviewRank: 10,
-        queryType: 'ItemNewAll',
         queryType: 'ItemNewAll',
         deleted: false,
       },
