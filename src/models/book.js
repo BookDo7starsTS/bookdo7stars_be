@@ -88,12 +88,5 @@ const Book = sequelize.define(
   },
 );
 
-Book.associate = function (models) {
-  Book.hasMany(BookQueryType, {
-    foreignKey: 'book_id',
-    sourceKey: 'id',
-  });
-}
-
 
 export default Book;

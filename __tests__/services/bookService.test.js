@@ -1,6 +1,5 @@
 import bookService from '../../src/services/bookService';
-import Book from '../../src/models/book';
-import BookQueryType from '../../src/models/bookQueryType';
+import {Book, BookQueryType} from '../../src/models/index.js';
 
 // Mock the Book model
 jest.mock('../../src/models/book');
