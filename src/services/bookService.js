@@ -1,8 +1,19 @@
 import Book from '../models/book.js';
+import BookQueryType from '../models/bookQueryType.js';
+import { QueryType } from '../enum/queryTypeEnum.js';
 
 class BookService {
-  async getAllBooks() {
-    const books = await Book.findAll();
+  async getAllBooks(page = 1, pageSize = 50) {
+    const order = [
+      ['title', 'ASC'],
+      ['author', 'DESC'],
+    ];
+
+    const books = await Book.findAndCountAll({
+      order,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
     return books;
   }
 
@@ -19,9 +30,7 @@ class BookService {
       throw new Error('Query type is missing');
     }
 
-    const validQueryTypes = new Set(['BlogBest', 'ItemNewSpecial', 'Bestseller', 'ItemNewAll']);
-
-    if (!validQueryTypes.has(queryType)) {
+    if (!Object.values(QueryType).includes(queryType)) {
       throw new Error('Invalid query type');
     }
 
@@ -31,12 +40,15 @@ class BookService {
     page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
     pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
 
-    const order = queryType === 'Bestseller' ? [['salespoint', 'DESC']] : [['pubDate', 'DESC']];
-
+    const order = queryType === 'Bestseller' ? [['sales_point', 'DESC']] : [['pub_date', 'DESC']];
     const books = await Book.findAll({
-      where: {
-        queryType,
-      },
+      include: [
+        {
+          model: BookQueryType,
+          where: { query_type: queryType }, // Filter by query_type
+          required: true, // INNER JOIN
+        },
+      ],
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,

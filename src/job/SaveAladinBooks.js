@@ -14,7 +14,7 @@ class AladinBooksJob {
 
   init() {
     console.log('start AladinBooksJob init method');
-    cron.schedule('12 16 * * *', async () => {
+    cron.schedule('27 7 * * *', async () => {
       console.log('Job running every day');
       const obj = new AladinBooksJob();
       await obj.getAladinBooks('ItemNewAll');
@@ -59,14 +59,36 @@ class AladinBooksJob {
         await sequelize.query(
           `
           INSERT INTO aladinbooks (
-            itemId, title, link, author, pubDate, description, isbn, isbn13, priceSales, 
-            priceStandard, mallType, stockStatus, mileage, cover, categoryId, categoryName, 
-            publisher, salesPoint, adult, fixedPrice, customerReviewRank
+            item_id, title, link, author, pub_date, description, isbn, isbn13, price_sales, 
+            price_standard, mall_type, stock_status, mileage, cover, category_id, category_name, 
+            publisher, sales_point, adult, fixed_price, customer_review_rank, query_type
           ) VALUES (
             :itemId, :title, :link, :author, :pubDate, :description, :isbn, :isbn13, :priceSales, 
             :priceStandard, :mallType, :stockStatus, :mileage, :cover, :categoryId, :categoryName, 
-            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank
+            :publisher, :salesPoint, :adult, :fixedPrice, :customerReviewRank, :queryType
           )
+          ON CONFLICT (item_id, query_type) DO UPDATE SET
+                    title = EXCLUDED.title,
+                    link = EXCLUDED.link,
+                    author = EXCLUDED.author,
+                    pub_date = EXCLUDED.pub_date,
+                    description = EXCLUDED.description,
+                    isbn = EXCLUDED.isbn,
+                    isbn13 = EXCLUDED.isbn13,
+                    price_sales = EXCLUDED.price_sales,
+                    price_standard = EXCLUDED.price_standard,
+                    mall_type = EXCLUDED.mall_type,
+                    stock_status = EXCLUDED.stock_status,
+                    mileage = EXCLUDED.mileage,
+                    cover = EXCLUDED.cover,
+                    category_id = EXCLUDED.category_id,
+                    category_name = EXCLUDED.category_name,
+                    publisher = EXCLUDED.publisher,
+                    sales_point = EXCLUDED.sales_point,
+                    adult = EXCLUDED.adult,
+                    fixed_price = EXCLUDED.fixed_price,
+                    customer_review_rank = EXCLUDED.customer_review_rank,
+                    query_type = EXCLUDED.query_type
         `,
           {
             replacements: {
@@ -91,13 +113,14 @@ class AladinBooksJob {
               adult: parsedData.object.item[i].adult,
               fixedPrice: parsedData.object.item[i].fixedPrice,
               customerReviewRank: parsedData.object.item[i].customerReviewRank,
+              queryType: queryType,
             },
             logging: false,
           },
         );
         console.log('Success : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
       } catch (error) {
-        console.error(error.name + ' : ' + queryType + ' : ' + page + ' : ' + parsedData.object.item[i].$.itemId);
+        console.error(error);
       }
     }
     // Send the parsed data as JSON
