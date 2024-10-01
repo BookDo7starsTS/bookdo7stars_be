@@ -33,7 +33,7 @@ class BookService {
     if (!Object.values(QueryType).includes(queryType)) {
       throw new Error('Invalid query type');
     }
-    
+
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
 
@@ -42,11 +42,13 @@ class BookService {
 
     const order = queryType === 'Bestseller' ? [['sales_point', 'DESC']] : [['pub_date', 'DESC']];
     const books = await Book.findAll({
-      include: [{
+      include: [
+        {
           model: BookQueryType,
           where: { query_type: queryType }, // Filter by query_type
           required: true, // INNER JOIN
-      }],
+        },
+      ],
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
