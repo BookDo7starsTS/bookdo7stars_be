@@ -69,6 +69,28 @@ router.get('/', async function (req, res) {
   }
 });
 
+router.get('/search', async function (req, res) {
+  try {
+    const { page, pageSize, searchTarget, searchTerm, title, author, publisher, start_date, orderTerm } = req.query;
+    const books = await bookService.getSearchedBooks(
+      page,
+      pageSize,
+      searchTarget,
+      searchTerm,
+      title,
+      author,
+      publisher,
+      start_date,
+      orderTerm,
+    );
+    res.status(200).json({ books: books.rows, count: books.count, message: 'Books loaded successfully' });
+  } catch (err) {
+    console.error('Error searching books: ', err.message);
+    if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
+    else res.status(500).json({ message: 'Error searching books' });
+  }
+});
+
 /**
  * @swagger
  * /book/detail/12:
