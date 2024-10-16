@@ -117,7 +117,7 @@ BEGIN
     customer_review_rank = EXCLUDED.customer_review_rank
 
   RETURNING id INTO new_book_id;
-  INSERT INTO books_query_type (book_id, query_type) VALUES (
+  INSERT INTO book_query_types (book_id, query_type) VALUES (
     new_book_id, NEW.query_type
   )
   ON CONFLICT (book_id, query_type) DO NOTHING;
