@@ -4,56 +4,50 @@ import { QueryType } from '../enum/queryTypeEnum.js';
 import { Op } from 'sequelize';
 
 class BookService {
-  async getAllBooks(page = 1, pageSize = 50) {
-    const order = [
-      ['title', 'ASC'],
-      ['author', 'DESC'],
-    ];
-
-    const books = await Book.findAndCountAll({
-      order,
-      limit: pageSize,
-      offset: (page - 1) * pageSize,
-    });
-    return books;
-  }
-
-  async getSearchedBooks(
+  async getAllBooks(
     page = 1,
-    pageSize = 20,
+    pageSize = 50,
     searchTarget,
     searchTerm,
     title,
     author,
     publisher,
     start_date,
+    end_date,
     orderTerm,
   ) {
     if (searchTarget) {
       // TODO 통합검색
+      // order default로 하기.
       return;
     }
-    const currentDate = new Date().toISOString().slice(0, 10);
 
     const order = this.getOrderType(orderTerm);
-    console.log('currentDate?', currentDate);
+
+    const whereCondition = {};
+    if (title) {
+      whereCondition.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (author) {
+      whereCondition.author = {
+        [Op.like]: `%${author}%`,
+      };
+    }
+    if (publisher) {
+      whereCondition.publisher = {
+        [Op.like]: `%${publisher}%`,
+      };
+    }
+    if (start_date && end_date) {
+      whereCondition.pub_date = {
+        [Op.between]: [start_date, end_date],
+      };
+    }
 
     const books = await Book.findAndCountAll({
-      // TODO 검색어가 있을 때와 없을 때 다르게 처리
-      where: {
-        // title: {
-        //   [Op.like]: `%${title}%`,
-        // },
-        author: {
-          [Op.like]: `%${author}%`,
-        },
-        // publisher: {
-        //   [Op.like]: `%${publisher}%`,
-        // },
-        // pub_date: {
-        //   [Op.between]: [start_date, currentDate],
-        // },
-      },
+      where: whereCondition,
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
@@ -101,26 +95,36 @@ class BookService {
     return books;
   }
 
+  async getBookByIsbn(isbn) {
+    const book = await Book.findOne({
+      where: { isbn: isbn },
+    });
+    if (!book) {
+      throw new Error('Book not found');
+    }
+    return book;
+  }
+
   getOrderType(orderTerm) {
     let order;
     switch (orderTerm) {
-      case 'SALES':
+      case 'sales':
         order = [['sales_point', 'ASC']];
         break;
 
-      case 'LOWPRICE':
+      case 'lowPrice':
         order = [['price_sales', 'DESC']];
         break;
 
-      case 'RANK':
+      case 'rank':
         order = [['customer_review_rank', 'ASC']];
         break;
 
-      case 'PUBDATE':
+      case 'publication':
         order = [['pub_date', 'ASC']];
         break;
 
-      case 'TITLE':
+      case 'name':
         order = [['title', 'ASC']];
         break;
 
