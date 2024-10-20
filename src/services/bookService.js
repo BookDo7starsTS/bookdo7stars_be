@@ -1,7 +1,7 @@
 import Book from '../models/book.js';
 import BookQueryType from '../models/bookQueryType.js';
 import { QueryType } from '../enum/queryTypeEnum.js';
-import { Op } from 'sequelize';
+import { Op, literal } from 'sequelize';
 
 class BookService {
   async getAllBooks(
@@ -22,7 +22,8 @@ class BookService {
       return;
     }
 
-    const order = this.getOrderType(orderTerm);
+    const order = this.getOrderType(orderTerm, title);
+    console.log(order);
 
     const whereCondition = {};
     if (title) {
@@ -105,7 +106,7 @@ class BookService {
     return book;
   }
 
-  getOrderType(orderTerm) {
+  getOrderType(orderTerm, title) {
     let order;
     switch (orderTerm) {
       case 'sales':
@@ -126,6 +127,9 @@ class BookService {
 
       case 'name':
         order = [['title', 'ASC']];
+        break;
+      case 'accuracy':
+        order = [[literal(`ts_rank(to_tsvector(title), to_tsquery('${title}'))`), 'DESC']];
         break;
 
       default:
