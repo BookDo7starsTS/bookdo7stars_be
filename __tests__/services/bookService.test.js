@@ -1,9 +1,55 @@
 import bookService from '../../src/services/bookService';
 import { Book, BookQueryType } from '../../src/models/index.js';
+import { Op } from 'sequelize';
 
 // Mock the Book model
 jest.mock('../../src/models/book');
 jest.mock('../../src/models/bookQueryType');
+const mockBooks = {
+  count: 2,
+  rows: [
+    {
+      id: '1',
+      isbn: 'xxx',
+      title: 'Title1',
+      author: 'author1',
+      description: 'description1',
+      cover: 'cover1',
+      stockStatus: 'xx',
+      categoryId: 'id1',
+      mileage: 1,
+      categoryName: 'cat1',
+      publisher: 'publisher1',
+      adult: true,
+      fixedPrice: true,
+      priceStandard: 100,
+      priceSales: 90,
+      customerReviewRank: 10,
+      queryType: 'queryType1',
+      deleted: false,
+    },
+    {
+      id: '2',
+      isbn: 'xxx2',
+      title: 'book2',
+      author: 'author2',
+      description: 'description2',
+      cover: 'cover2',
+      stockStatus: 'xx2',
+      categoryId: 'id2',
+      mileage: 2,
+      categoryName: 'cat1',
+      publisher: 'publisher2',
+      adult: true,
+      fixedPrice: true,
+      priceStandard: 100,
+      priceSales: 90,
+      customerReviewRank: 10,
+      queryType: 'queryType1',
+      deleted: false,
+    },
+  ],
+};
 
 describe('bookService', () => {
   beforeEach(() => {
@@ -11,51 +57,6 @@ describe('bookService', () => {
   });
 
   it('should load all books in Book table in the database', async () => {
-    const mockBooks = {
-      count: 2,
-      rows: [
-        {
-          id: '1',
-          isbn: 'xxx',
-          title: 'book1',
-          author: 'author1',
-          description: 'description1',
-          cover: 'cover1',
-          stockStatus: 'xx',
-          categoryId: 'id1',
-          mileage: 1,
-          categoryName: 'cat1',
-          publisher: 'publisher1',
-          adult: true,
-          fixedPrice: true,
-          priceStandard: 100,
-          priceSales: 90,
-          customerReviewRank: 10,
-          queryType: 'queryType1',
-          deleted: false,
-        },
-        {
-          id: '2',
-          isbn: 'xxx2',
-          title: 'book2',
-          author: 'author2',
-          description: 'description2',
-          cover: 'cover2',
-          stockStatus: 'xx2',
-          categoryId: 'id2',
-          mileage: 2,
-          categoryName: 'cat1',
-          publisher: 'publisher2',
-          adult: true,
-          fixedPrice: true,
-          priceStandard: 100,
-          priceSales: 90,
-          customerReviewRank: 10,
-          queryType: 'queryType1',
-          deleted: false,
-        },
-      ],
-    };
     Book.findAndCountAll.mockResolvedValue(mockBooks);
 
     const result = await bookService.getAllBooks();
@@ -64,55 +65,11 @@ describe('bookService', () => {
   });
 
   it('should load all books in Book table with pagination', async () => {
-    const mockBooks = {
-      count: 2,
-      rows: [
-        {
-          id: '1',
-          isbn: 'xxx',
-          title: 'book1',
-          author: 'author1',
-          description: 'description1',
-          cover: 'cover1',
-          stockStatus: 'xx',
-          categoryId: 'id1',
-          mileage: 1,
-          categoryName: 'cat1',
-          publisher: 'publisher1',
-          adult: true,
-          fixedPrice: true,
-          priceStandard: 100,
-          priceSales: 90,
-          customerReviewRank: 10,
-          queryType: 'queryType1',
-          deleted: false,
-        },
-        {
-          id: '2',
-          isbn: 'xxx2',
-          title: 'book2',
-          author: 'author2',
-          description: 'description2',
-          cover: 'cover2',
-          stockStatus: 'xx2',
-          categoryId: 'id2',
-          mileage: 2,
-          categoryName: 'cat1',
-          publisher: 'publisher2',
-          adult: true,
-          fixedPrice: true,
-          priceStandard: 100,
-          priceSales: 90,
-          customerReviewRank: 10,
-          queryType: 'queryType1',
-          deleted: false,
-        },
-      ],
-    };
     Book.findAndCountAll.mockResolvedValue(mockBooks);
 
     const result = await bookService.getAllBooks(2, 50);
     expect(Book.findAndCountAll).toHaveBeenCalledWith({
+      where: {},
       limit: 50,
       offset: 50,
       order: [
@@ -333,5 +290,43 @@ describe('bookService', () => {
     Book.findAll.mockRejectedValue(new Error('Database error'));
 
     await expect(bookService.getBooksByQueryType('Bestseller', 1, 20)).rejects.toThrow('Database error');
+  });
+
+  it('should return a book with title Title1 when it is searched with book1', async () => {
+    const title = 'Title1';
+    const page = 1;
+    const pageSize = 20;
+
+    Book.findAndCountAll.mockResolvedValue(mockBooks);
+
+    const result = await bookService.getAllBooks(
+      page,
+      pageSize,
+      undefined,
+      undefined,
+      title,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    );
+
+    const condition = {
+      where: {
+        title: {
+          [Op.like]: `%${title}%`,
+        },
+      },
+      order: [
+        ['title', 'ASC'],
+        ['author', 'DESC'],
+      ],
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    };
+
+    expect(Book.findAndCountAll).toHaveBeenCalledWith(condition);
+    expect(result.title).toEqual(title);
   });
 });

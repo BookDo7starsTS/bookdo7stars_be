@@ -23,7 +23,6 @@ class BookService {
     }
 
     const order = this.getOrderType(orderTerm, title);
-    console.log(order);
 
     const whereCondition = {};
     if (title) {
@@ -46,7 +45,6 @@ class BookService {
         [Op.between]: [start_date, end_date],
       };
     }
-
     const books = await Book.findAndCountAll({
       where: whereCondition,
       order,
