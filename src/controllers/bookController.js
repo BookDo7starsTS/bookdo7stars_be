@@ -59,8 +59,20 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const { page, pageSize } = req.query;
-    const books = await bookService.getAllBooks(page, pageSize);
+    const { page, pageSize, searchTarget, searchTerm, title, author, publisher, start_date, end_date, orderTerm } =
+      req.query;
+    const books = await bookService.getAllBooks(
+      page,
+      pageSize,
+      searchTarget,
+      searchTerm,
+      title,
+      author,
+      publisher,
+      start_date,
+      end_date,
+      orderTerm,
+    );
     res.status(200).json({ books: books.rows, count: books.count, message: 'Books loaded successfully' });
   } catch (err) {
     console.error('Error loading books: ', err.message);
@@ -241,6 +253,83 @@ router.get('/:groupName', async function (req, res) {
     }
 
     res.status(500).json({ message: 'Error loading books by group name' });
+  }
+});
+
+/**
+ * @swagger
+ * /book/search/{isbn}:
+ *   get:
+ *     tags: [Get books by ISBN]
+ *     summary: Find books by ISBN
+ *     description: Returns books by ISBN from the database.
+ *     operationId: getBooksByIsbn
+ *     parameters:
+ *       - name: isbn
+ *         in: path
+ *         description: The type of book to fetch isbn
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Books by isbn loaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books:
+ *                   type: object
+ *                   description: a book objects
+ *                   example: {
+ *                      "title": "book1",
+ *                      "isbn": "xxx",
+ *                      "author": "author1",
+ *                      "cover": "cover1",
+ *                      "priceStandard": 100
+ *                    }
+ *                 message:
+ *                   type: string
+ *                   description: response message
+ *                   example: Books with 123456789 loaded successfully
+ *       400:
+ *         description: Invalid query type supplied
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid query type
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *                   example: Error loading books by query type
+ */
+
+router.get('/search/:isbn', async function (req, res) {
+  try {
+    const isbn = req.params.isbn;
+    const book = await bookService.getBookByIsbn(isbn);
+    res.status(200).json({ book, message: `Book with ${isbn} loaded successfully` });
+  } catch (err) {
+    console.error('Error loading book: ', err.message);
+    if (err.errors != null && err.errors[0].message != null) {
+      return res.status(500).json({ message: err.errors[0].message });
+    }
+    if (err.message === 'Book not found') {
+      return res.status(404).json({ message: err.message });
+    }
+    res.status(500).json({ message: 'Error loading book' });
   }
 });
 
