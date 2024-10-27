@@ -296,8 +296,33 @@ describe('bookService', () => {
     const title = 'Title1';
     const page = 1;
     const pageSize = 20;
+    const mockBooksFiltered = {
+      count: 1,
+      rows: [
+        {
+          id: '1',
+          isbn: 'xxx',
+          title: 'Title1',
+          author: 'author1',
+          description: 'description1',
+          cover: 'cover1',
+          stockStatus: 'xx',
+          categoryId: 'id1',
+          mileage: 1,
+          categoryName: 'cat1',
+          publisher: 'publisher1',
+          adult: true,
+          fixedPrice: true,
+          priceStandard: 100,
+          priceSales: 90,
+          customerReviewRank: 10,
+          queryType: 'queryType1',
+          deleted: false,
+        },
+      ],
+    };
 
-    Book.findAndCountAll.mockResolvedValue(mockBooks);
+    Book.findAndCountAll.mockResolvedValue(mockBooksFiltered);
 
     const result = await bookService.getAllBooks(
       page,
@@ -327,7 +352,7 @@ describe('bookService', () => {
     };
 
     expect(Book.findAndCountAll).toHaveBeenCalledWith(condition);
-    expect(result.rows[0].title).toEqual(title);
+    expect(result).toEqual(mockBooksFiltered);
   });
 
   it('should return a book with isbn xxx when it is searched by isbn of xxx', async () => {
