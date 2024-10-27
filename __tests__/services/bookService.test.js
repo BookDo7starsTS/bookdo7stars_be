@@ -327,6 +327,17 @@ describe('bookService', () => {
     };
 
     expect(Book.findAndCountAll).toHaveBeenCalledWith(condition);
-    expect(result.title).toEqual(title);
+    expect(result.rows[0].title).toEqual(title);
+  });
+
+  it('should return a book with isbn xxx when it is searched by isbn of xxx', async () => {
+    const givenIsbn = 'xxx';
+
+    Book.findOne.mockResolvedValue(mockBooks.rows[0]);
+
+    const result = await bookService.getBookByIsbn(givenIsbn);
+
+    expect(Book.findOne).toHaveBeenCalledWith({ where: { isbn: givenIsbn } });
+    expect(result).toEqual(mockBooks.rows[0]);
   });
 });
