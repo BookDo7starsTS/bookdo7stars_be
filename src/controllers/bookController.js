@@ -260,10 +260,10 @@ router.get('/:groupName', async function (req, res) {
  * @swagger
  * /book/search/{isbn}:
  *   get:
- *     tags: [Get books by ISBN]
- *     summary: Find books by ISBN
- *     description: Returns books by ISBN from the database.
- *     operationId: getBooksByIsbn
+ *     tags: [Get book by ISBN]
+ *     summary: Find book by ISBN
+ *     description: Returns book by ISBN from the database.
+ *     operationId: getBookByIsbn
  *     parameters:
  *       - name: isbn
  *         in: path
@@ -273,7 +273,7 @@ router.get('/:groupName', async function (req, res) {
  *           type: string
  *     responses:
  *       200:
- *         description: Books by isbn loaded successfully
+ *         description: Book by isbn loaded successfully
  *         content:
  *           application/json:
  *             schema:
@@ -292,9 +292,9 @@ router.get('/:groupName', async function (req, res) {
  *                 message:
  *                   type: string
  *                   description: response message
- *                   example: Books with 123456789 loaded successfully
+ *                   example: Book with 123456789 loaded successfully
  *       400:
- *         description: Invalid query type supplied
+ *         description: Invalid isbn supplied
  *         content:
  *           application/json:
  *             schema:
@@ -302,7 +302,7 @@ router.get('/:groupName', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Invalid query type
+ *                   example: Invalid isbn
  *       500:
  *         description: Internal server error
  *         content:
@@ -313,7 +313,7 @@ router.get('/:groupName', async function (req, res) {
  *                 message:
  *                   type: string
  *                   description: Error message
- *                   example: Error loading books by query type
+ *                   example: Error loading book by isbn
  */
 
 router.get('/search/:isbn', async function (req, res) {
