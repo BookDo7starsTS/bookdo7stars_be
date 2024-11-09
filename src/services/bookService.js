@@ -4,18 +4,7 @@ import { QueryType } from '../enum/queryTypeEnum.js';
 import { Op, literal } from 'sequelize';
 
 class BookService {
-  async getAllBooks(
-    page = 1,
-    pageSize = 50,
-    searchTarget,
-    searchTerm,
-    title,
-    author,
-    publisher,
-    start_date,
-    end_date,
-    orderTerm,
-  ) {
+  async getAllBooks(page = 1, pageSize = 50, title, author, publisher, start_date, end_date, orderTerm) {
     const order = this.getOrderType(orderTerm, title);
 
     const whereCondition = {};
