@@ -16,12 +16,6 @@ class BookService {
     end_date,
     orderTerm,
   ) {
-    if (searchTarget) {
-      // TODO 통합검색
-      // order default로 하기.
-      return;
-    }
-
     const order = this.getOrderType(orderTerm, title);
 
     const whereCondition = {};
