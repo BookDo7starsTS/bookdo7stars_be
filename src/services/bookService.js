@@ -16,49 +16,35 @@ class BookService {
     end_date,
     orderTerm,
   ) {
-    const whereCondition = {};
-
-    if (searchTarget && searchTerm) {
+    if (searchTarget) {
       // TODO 통합검색
       // order default로 하기.
-      if (searchTarget === 'title') {
-        whereCondition.title = {
-          [Op.like]: `%${searchTerm}%`,
-        };
-      } else if (searchTarget === 'author') {
-        whereCondition.author = {
-          [Op.like]: `%${searchTerm}%`,
-        };
-      } else if (searchTarget === 'publisher') {
-        whereCondition.publisher = {
-          [Op.like]: `%${searchTerm}%`,
-        };
-      }
-    } else {
-      if (title) {
-        whereCondition.title = {
-          [Op.like]: `%${title}%`,
-        };
-      }
-      if (author) {
-        whereCondition.author = {
-          [Op.like]: `%${author}%`,
-        };
-      }
-      if (publisher) {
-        whereCondition.publisher = {
-          [Op.like]: `%${publisher}%`,
-        };
-      }
-      if (start_date && end_date) {
-        whereCondition.pub_date = {
-          [Op.between]: [start_date, end_date],
-        };
-      }
+      return;
     }
 
     const order = this.getOrderType(orderTerm, title);
 
+    const whereCondition = {};
+    if (title) {
+      whereCondition.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (author) {
+      whereCondition.author = {
+        [Op.like]: `%${author}%`,
+      };
+    }
+    if (publisher) {
+      whereCondition.publisher = {
+        [Op.like]: `%${publisher}%`,
+      };
+    }
+    if (start_date && end_date) {
+      whereCondition.pub_date = {
+        [Op.between]: [start_date, end_date],
+      };
+    }
     const books = await Book.findAndCountAll({
       where: whereCondition,
       order,
