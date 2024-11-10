@@ -113,7 +113,7 @@ class BookService {
         break;
 
       case 'lowPrice':
-        order = [['price_sales', 'DESC']];
+        order = [['price_sales', 'ASC']];
         break;
 
       case 'rank':
