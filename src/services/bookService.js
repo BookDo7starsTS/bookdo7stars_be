@@ -125,7 +125,7 @@ class BookService {
         break;
 
       case 'name':
-        order = [['title', 'ASC']];
+        order = [[literal(`title COLLATE "ko_KR.utf8"`), 'ASC']];
         break;
       case 'accuracy':
         order = [[literal(`ts_rank(to_tsvector(title), to_tsquery('${title}'))`), 'DESC']];
