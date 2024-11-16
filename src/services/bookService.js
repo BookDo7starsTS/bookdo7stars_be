@@ -22,7 +22,7 @@ class BookService {
       whereCondition[Op.or] = [
         { title: { [Op.like]: `%${searchTerm}%` } },
         { author: { [Op.like]: `%${searchTerm}%` } },
-        { publisher: { [Op.like]: `%${searchTerm}` } },
+        { publisher: { [Op.like]: `%${searchTerm}%` } },
       ];
     }
     if (title) {
