@@ -16,15 +16,15 @@ class BookService {
     end_date,
     orderTerm,
   ) {
-    if (searchTarget) {
-      // TODO 통합검색
-      // order default로 하기.
-      return;
-    }
-
-    const order = this.getOrderType(orderTerm, title);
-
     const whereCondition = {};
+    if (searchTerm) {
+      // TODO 통합검색
+      whereCondition[Op.or] = [
+        { title: { [Op.like]: `%${searchTerm}%` } },
+        { author: { [Op.like]: `%${searchTerm}%` } },
+        { publisher: { [Op.like]: `%${searchTerm}%` } },
+      ];
+    }
     if (title) {
       whereCondition.title = {
         [Op.like]: `%${title}%`,
@@ -45,6 +45,7 @@ class BookService {
         [Op.between]: [start_date, end_date],
       };
     }
+    const order = this.getOrderType(orderTerm, title);
     const books = await Book.findAndCountAll({
       where: whereCondition,
       order,
@@ -112,7 +113,7 @@ class BookService {
         break;
 
       case 'lowPrice':
-        order = [['price_sales', 'DESC']];
+        order = [['price_sales', 'ASC']];
         break;
 
       case 'rank':
@@ -124,7 +125,7 @@ class BookService {
         break;
 
       case 'name':
-        order = [['title', 'ASC']];
+        order = [[literal(`title COLLATE "ko_KR.utf8"`), 'ASC']];
         break;
       case 'accuracy':
         order = [[literal(`ts_rank(to_tsvector(title), to_tsquery('${title}'))`), 'DESC']];
