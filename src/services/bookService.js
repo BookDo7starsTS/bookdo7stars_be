@@ -7,7 +7,7 @@ class BookService {
   async getAllBooks(
     page = 1,
     pageSize = 50,
-    searchTarget,
+    category_id,
     searchTerm,
     title,
     author,
@@ -39,6 +39,11 @@ class BookService {
       whereCondition.publisher = {
         [Op.like]: `%${publisher}%`,
       };
+    }
+    if (category_id) {
+      console.log('category_id: ', category_id, 'typeof는??? ', typeof category_id);
+      whereCondition.categoryId = category_id; //그대로 사용하기
+      // whereCondition.categoryId = String(category_id); //스트링으로 변환
     }
     if (start_date && end_date) {
       whereCondition.pub_date = {
