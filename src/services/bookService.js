@@ -41,9 +41,7 @@ class BookService {
       };
     }
     if (category_id) {
-      console.log('category_id: ', category_id, 'typeof는??? ', typeof category_id);
-      whereCondition.categoryId = category_id; //그대로 사용하기
-      // whereCondition.categoryId = String(category_id); //스트링으로 변환
+      whereCondition.categoryId = category_id;
     }
     if (start_date && end_date) {
       whereCondition.pub_date = {
