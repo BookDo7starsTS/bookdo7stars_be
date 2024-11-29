@@ -24,21 +24,20 @@ class CategoryService {
         replacements: { level },
       },
     );
-
+    let result = [];
     let categoryMap = new Map();
     for (let category of categoriesHierarchy[0]) {
       if (category.level === 1) continue;
       if (category.level === 2) {
-        category.child = [];
-        categoryMap.set(category.id, category);
+        category.children = [];
+        categoryMap.set(category.id, { children: category.children, id: category.id, name: category.name });
+        result.push(categoryMap.get(category.id));
         continue;
       }
-      categoryMap.get(category.parent_id).child.push(category);
+      categoryMap.get(category.parent_id).children.push({ id: category.id, name: category.name });
     }
 
-    console.log(categoryMap);
-
-    return categoryMap;
+    return result;
   }
 }
 

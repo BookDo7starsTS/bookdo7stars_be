@@ -17,8 +17,8 @@ const depth = ['D', 'E', 'F', 'G', 'H', 'I'];
 //상위 카테고리부터 작업. 엑셀 파일들 행 순서가 뒤죽박죽이러다구 글쎄?
 for (let idxDepth = 1; idxDepth < depth.length; idxDepth++) {
   for (let i = 4; i <= 4872; i++) {
-    const depthPreviousCell = getCellValue(depth[idxDepth - 1] + i);
-    const depthCell = getCellValue(depth[idxDepth] + i);
+    const depthPreviousCell = getCellValue(depth[idxDepth - 1] + i); //D
+    const depthCell = getCellValue(depth[idxDepth] + i); //E
 
     //바로 이전 셀에 값이 있고 지금 셀이 빈셀이면 작업한다.
     if (!(depthPreviousCell != undefined && depthCell === undefined)) continue;
@@ -74,12 +74,21 @@ function findParentId(row) {
   else if (dValue) names = categoryMap.get(cValue);
   else;
 
+  /*  마더텅,[
+        {id:77048, currentPath: 국내도서고등학교참고서고등학교출판사별마더텅}
+        ,{id:76753, currentPath: 국내도서중학교참고서중학교출판사별마더텅
+        }
+     ];
+     */
+
   if (names.length == 1) return names[0].id;
 
   //부모가 마더텅처럼 id가 여러개인 경우.
   //현재 카테고리의 부모 경로를 구하고
   //마더텅들을 순회하면서 경로를 비교하여 일치하면 리턴
   const parentPath = getParentPathFromExcel(row);
+  //영문법 3800제(중등):  국내도서중학교참고서중학교출판사별마더텅
+
   for (let name of names) {
     if (name.currentPath === parentPath) return name.id;
   }
