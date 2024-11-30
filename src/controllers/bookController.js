@@ -152,6 +152,25 @@ router.get('/detail/:id', async function (req, res) {
   }
 });
 
+router.get('/mainpage', async function (req, res) {
+  const baseUrl = req.protocol + '://' + req.get('host');
+  const banner = [
+    { cover: `${baseUrl}/images/image1.jpg`, id: '352204020' },
+    { cover: `${baseUrl}/images/image2.jpg`, id: '352920734' },
+    { cover: `${baseUrl}/images/image3.jpg`, id: '351975295' },
+    { cover: `${baseUrl}/images/image4.jpg`, id: '351975355' },
+    { cover: `${baseUrl}/images/image5.jpg`, id: '353017075' },
+  ];
+
+  const itemNewSpecial = await bookService.getBooksByQueryType('ItemNewSpecial', 1, 10);
+  const bestSeller = await bookService.getBooksByQueryType('Bestseller', 1, 20);
+  const itemNewAll = await bookService.getBooksByQueryType('ItemNewAll', 1, 20);
+  const itemEditorChoice = await bookService.getBooksByQueryType('ItemEditorChoice', 1, 10);
+
+  const books = { banner, itemNewSpecial, bestSeller, itemNewAll, itemEditorChoice };
+  res.status(200).json({ books, message: 'mainpage loaded successfully' });
+});
+
 /**
  * @swagger
  * /book/{groupName}:
