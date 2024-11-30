@@ -1,5 +1,6 @@
 import express from 'express';
 import bookService from '../services/bookService.js';
+import categoryService from '../services/categoryService.js';
 
 /**
  * @swagger
@@ -162,12 +163,12 @@ router.get('/mainpage', async function (req, res) {
     { cover: `${baseUrl}/images/image5.jpg`, id: '353017075' },
   ];
 
-  const itemNewSpecial = await bookService.getBooksByQueryType('ItemNewSpecial', 1, 10);
-  const bestSeller = await bookService.getBooksByQueryType('Bestseller', 1, 20);
-  const itemNewAll = await bookService.getBooksByQueryType('ItemNewAll', 1, 20);
-  const itemEditorChoice = await bookService.getBooksByQueryType('ItemEditorChoice', 1, 10);
+  const itemNewSpecial = await bookService.getBooksByQueryType('ItemNewSpecial', 1, 8);
+  const bestSellerCategory = await categoryService.getCategories(2);
+  const itemNewAll = await bookService.getBooksByQueryType('ItemNewAll', 1, 12);
+  const itemEditorChoice = await bookService.getBooksByQueryType('ItemEditorChoice', 1, 8);
 
-  const books = { banner, itemNewSpecial, bestSeller, itemNewAll, itemEditorChoice };
+  const books = { banner, itemNewSpecial, bestSellerCategory, itemNewAll, itemEditorChoice };
   res.status(200).json({ books, message: 'mainpage loaded successfully' });
 });
 
