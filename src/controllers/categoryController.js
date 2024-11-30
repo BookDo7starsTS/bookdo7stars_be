@@ -55,7 +55,13 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const categories = await categoryService.getAllCategories();
+    const level = req.query.level;
+    let categories;
+    if (level) {
+      categories = await categoryService.getCategoryHierarchy(level);
+    } else {
+      categories = await categoryService.getCategoryHierarchy();
+    }
     res.status(200).json({ categories: categories, message: 'Categories loaded successfully' });
   } catch (err) {
     console.error('Error loading categories: ', err.message);
