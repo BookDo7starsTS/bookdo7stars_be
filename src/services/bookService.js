@@ -7,7 +7,7 @@ class BookService {
   async getAllBooks(
     page = 1,
     pageSize = 50,
-    searchTarget,
+    category_id,
     searchTerm,
     title,
     author,
@@ -39,6 +39,9 @@ class BookService {
       whereCondition.publisher = {
         [Op.like]: `%${publisher}%`,
       };
+    }
+    if (category_id) {
+      whereCondition.categoryId = category_id;
     }
     if (start_date && end_date) {
       whereCondition.pub_date = {
