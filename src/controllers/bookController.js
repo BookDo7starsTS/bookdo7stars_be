@@ -240,6 +240,53 @@ router.get('/mainpage', async function (req, res) {
   }
 });
 
+/**
+ * @swagger
+ * /book:
+ *   get:
+ *     summary: Load Bestseller books under a specific category.
+ *     tags: [Get Bestseller books with cateogry ID]
+ *     responses:
+ *       200:
+ *         description: BestSeller Books by category Ids loaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books:
+ *                   type: array
+ *                   description: book array
+ *                   example: [{
+ *                      "title": "book1",
+ *                      "isbn": "xxx",
+ *                      "author": "author1",
+ *                      "cover": "cover1",
+ *                      "priceStandard": 100
+ *                    },
+ *                    {
+ *                      "title": "book2",
+ *                      "isbn": "xxx2",
+ *                      "author": "author2",
+ *                      "cover": "cover2",
+ *                      "priceStandard": 100
+ *                    }]
+ *                 message:
+ *                   type: string
+ *                   description: 응답 메세지
+ *                   example: BestSeller Books by category Ids loaded successfully
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 오류 메세지
+ *                   example: Error loading BestSeller Books
+ */
 router.get('/mainpage/bestseller', async function (req, res) {
   try {
     const { categoryId, page, pageSize } = req.query;

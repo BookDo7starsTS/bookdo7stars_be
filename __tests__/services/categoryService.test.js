@@ -5,18 +5,19 @@ jest.mock('../../src/config/db', () => ({
   query: jest.fn(),
 }));
 
-const mockCategory = [
-  { id: 2, name: 'Category 2', parent_id: 1, level: 2, route: 'Category 1>Category 2' },
-  { id: 3, name: 'Category 3', parent_id: 1, level: 2, route: 'Category 1>Category 3' },
-  { id: 4, name: 'Category 4', parent_id: 2, level: 3, route: 'Category 1>Category 2>Category 4' },
-];
 describe('bookService', () => {
-  //beforeEach(() => {
-  //  jest.clearAllMocks();
-  //});
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('should return categories hierarchy with level 2', async () => {
-    sequelize.query.mockResolvedValueOnce([mockCategory]);
+    sequelize.query.mockResolvedValueOnce([
+      [
+        { id: 2, name: 'Category 2', parent_id: 1, level: 2, route: 'Category 1>Category 2' },
+        { id: 3, name: 'Category 3', parent_id: 1, level: 2, route: 'Category 1>Category 3' },
+        { id: 4, name: 'Category 4', parent_id: 2, level: 3, route: 'Category 1>Category 2>Category 4' },
+      ],
+    ]);
 
     const result = await categoryService.getCategories(2);
 
@@ -38,6 +39,10 @@ describe('bookService', () => {
   });
 
   it('should return children ids', async () => {
-    categoryService.getChildrenIds(1196);
+    sequelize.query.mockResolvedValueOnce([[{ id: 2 }, { id: 3 }, { id: 4 }]]);
+
+    const result = await categoryService.getChildrenIds(1196);
+    expect(result).toEqual([2, 3, 4]);
+    expect(sequelize.query).toHaveBeenCalledTimes(1);
   });
 });
