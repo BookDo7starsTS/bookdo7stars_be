@@ -140,6 +140,19 @@ CREATE TABLE categories
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE banners (
+    cover VARCHAR(1024) UNIQUE NOT NULL,
+    id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+insert into banners values ('image1.jpg',352204020);
+insert into banners values ('image2.jpg',352920734);
+insert into banners values ('image3.jpg',351975295);
+insert into banners values ('image4.jpg',351975355);
+insert into banners values ('image5.jpg',353017075);
+
+
 insert into categories (id,name) values ('0','국내도서');
 insert into categories (id,name,parent_id) values ('1230','가정/요리/뷰티','0');
 insert into categories (id,name,parent_id) values ('55890','건강/취미/레저','0');

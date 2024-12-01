@@ -153,23 +153,102 @@ router.get('/detail/:id', async function (req, res) {
   }
 });
 
+/**
+ * @swagger
+ * /book/mainpage:
+ *   get:
+ *     tags: [Get main page books ]
+ *     summary: Find books for main page
+ *     description: Returns books for main page from the database.
+ *     responses:
+ *       200:
+ *         description: mainpage loaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books:
+ *                   type: object
+ *                   description: mainbook objects
+ *                   example: {
+ *                      banner: [
+ *                        {id:123, cover:http://localhost:4000/images/banner/images1.jpg},
+ *                        {id:345, cover:http://localhost:4000/images/banner/images2.jpg},
+ *                      ],
+ *                      itemNewSpecial: [
+ *                        {
+ *                          "title": "book1",
+ *                          "isbn": "xxx",
+ *                          "author": "author1",
+ *                          "cover": "cover1",
+ *                          "priceStandard": 100
+ *                        },
+ *                       ],
+ *                       bestSellerCategory: [
+ *                          {id:123123, name:"연애"},
+ *                          {id:345345, name:"만화"},
+ *                       ],
+ *                       itemNewAll: [
+ *                        {
+ *                          "title": "book1",
+ *                          "isbn": "xxx",
+ *                          "author": "author1",
+ *                          "cover": "cover1",
+ *                          "priceStandard": 100
+ *                        },
+ *                       ],
+ *                       itemEditorChoice: [
+ *                        {
+ *                          "title": "book1",
+ *                          "isbn": "xxx",
+ *                          "author": "author1",
+ *                          "cover": "cover1",
+ *                          "priceStandard": 100
+ *                        },
+ *                       ],
+ *                    }
+ *                 message:
+ *                   type: string
+ *                   description: response message
+ *                   example: mainpage loaded successfully
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *                   example: Error loading main page
+ */
 router.get('/mainpage', async function (req, res) {
-  const baseUrl = req.protocol + '://' + req.get('host');
-  const banner = [
-    { cover: `${baseUrl}/images/image1.jpg`, id: '352204020' },
-    { cover: `${baseUrl}/images/image2.jpg`, id: '352920734' },
-    { cover: `${baseUrl}/images/image3.jpg`, id: '351975295' },
-    { cover: `${baseUrl}/images/image4.jpg`, id: '351975355' },
-    { cover: `${baseUrl}/images/image5.jpg`, id: '353017075' },
-  ];
+  try {
+    const baseUrl = req.protocol + '://' + req.get('host');
+    const banner = await bookService.getBanners(baseUrl);
+    const itemNewSpecial = await bookService.getBooksByQueryType('ItemNewSpecial', 1, 8);
+    const bestSellerCategory = await categoryService.getCategories(2);
+    const itemNewAll = await bookService.getBooksByQueryType('ItemNewAll', 1, 12);
+    const itemEditorChoice = await bookService.getBooksByQueryType('ItemEditorChoice', 1, 8);
 
-  const itemNewSpecial = await bookService.getBooksByQueryType('ItemNewSpecial', 1, 8);
-  const bestSellerCategory = await categoryService.getCategories(2);
-  const itemNewAll = await bookService.getBooksByQueryType('ItemNewAll', 1, 12);
-  const itemEditorChoice = await bookService.getBooksByQueryType('ItemEditorChoice', 1, 8);
+    const books = { banner, itemNewSpecial, bestSellerCategory, itemNewAll, itemEditorChoice };
+    res.status(200).json({ books, message: 'mainpage loaded successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error loading main page' });
+  }
+});
 
-  const books = { banner, itemNewSpecial, bestSellerCategory, itemNewAll, itemEditorChoice };
-  res.status(200).json({ books, message: 'mainpage loaded successfully' });
+router.get('/mainpage/bestseller', async function (req, res) {
+  try {
+    const { categoryId, page, pageSize } = req.query;
+    const childrenIds = await categoryService.getChildrenIds(categoryId);
+    const books = await bookService.getBooksByQueryTypeAndCategoryIds('Bestseller', childrenIds, page, pageSize);
+    res.status(200).json({ books, message: 'BestSeller Books by category Ids loaded successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error loading BestSeller Books' });
+  }
 });
 
 /**

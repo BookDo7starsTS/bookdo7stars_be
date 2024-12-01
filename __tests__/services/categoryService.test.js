@@ -36,4 +36,8 @@ describe('bookService', () => {
 
     expect(sequelize.query).toHaveBeenCalledTimes(1); // 쿼리가 한 번만 호출되었는지 확인
   });
+
+  it('should return children ids', async () => {
+    categoryService.getChildrenIds(1196);
+  });
 });
