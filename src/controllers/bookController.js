@@ -59,24 +59,12 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const {
-      page,
-      pageSize,
-      category_id,
-      searchTarget,
-      searchTerm,
-      title,
-      author,
-      publisher,
-      start_date,
-      end_date,
-      orderTerm,
-    } = req.query;
+    const { page, pageSize, category_id, searchTerm, title, author, publisher, start_date, end_date, orderTerm } =
+      req.query;
     const books = await bookService.getAllBooks(
       page,
       pageSize,
       category_id,
-      searchTarget,
       searchTerm,
       title,
       author,
