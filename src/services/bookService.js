@@ -15,6 +15,8 @@ class BookService {
     start_date,
     end_date,
     orderTerm,
+    start_price,
+    end_price,
   ) {
     const whereCondition = {};
     if (searchTerm) {
@@ -48,6 +50,13 @@ class BookService {
         [Op.between]: [start_date, end_date],
       };
     }
+
+    if (start_price && end_price) {
+      whereCondition.price_standard = {
+        [Op.between]: [start_price, end_price],
+      };
+    }
+
     const order = this.getOrderType(orderTerm, title);
     const books = await Book.findAndCountAll({
       where: whereCondition,
