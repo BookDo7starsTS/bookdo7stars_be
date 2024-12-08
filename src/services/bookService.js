@@ -4,18 +4,22 @@ import { QueryType } from '../enum/queryTypeEnum.js';
 import { Op, literal } from 'sequelize';
 
 class BookService {
-  async getAllBooks(
-    page = 1,
-    pageSize = 50,
-    category_id,
-    searchTerm,
-    title,
-    author,
-    publisher,
-    start_date,
-    end_date,
-    orderTerm,
-  ) {
+  async getAllBooks(query) {
+    const {
+      page = 1,
+      pageSize = 50,
+      category_id,
+      searchTerm,
+      title,
+      author,
+      publisher,
+      start_date,
+      end_date,
+      orderTerm,
+      start_price,
+      end_price,
+    } = query;
+
     const whereCondition = {};
     if (searchTerm) {
       // TODO 통합검색
@@ -48,6 +52,13 @@ class BookService {
         [Op.between]: [start_date, end_date],
       };
     }
+
+    if (start_price && end_price) {
+      whereCondition.price_sales = {
+        [Op.between]: [start_price, end_price],
+      };
+    }
+
     const order = this.getOrderType(orderTerm, title);
     const books = await Book.findAndCountAll({
       where: whereCondition,
