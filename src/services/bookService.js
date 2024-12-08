@@ -52,7 +52,7 @@ class BookService {
     }
 
     if (start_price && end_price) {
-      whereCondition.price_standard = {
+      whereCondition.price_sales = {
         [Op.between]: [start_price, end_price],
       };
     }
