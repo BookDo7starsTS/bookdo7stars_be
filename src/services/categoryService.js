@@ -39,6 +39,26 @@ class CategoryService {
 
     return result;
   }
+  async getCategoriesById(id) {
+    const categories = await sequelize.query(
+      `SELECT id, name, parent_id,
+      (SELECT count(*) FROM categories b WHERE b.parent_id = a.id) as count
+      FROM categories a
+      WHERE parent_id = :id;
+      `,
+      {
+        replacements: { id },
+      },
+    );
+    const result = [];
+    let categoryMap = new Map();
+    for (let category of categories[0]) {
+      result.push(category);
+      categoryMap.set(id, result);
+    }
+
+    return categoryMap;
+  }
 }
 
 export default new CategoryService();

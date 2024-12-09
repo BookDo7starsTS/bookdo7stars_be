@@ -66,4 +66,17 @@ router.get('/', async function (req, res) {
   }
 });
 
+router.get('/:id', async function (req, res) {
+  try {
+    const id = req.params.id;
+    const categories = await categoryService.getCategoriesById(id);
+    console.log('CATEGORIES, ', categories);
+    res.status(200).json(Object.fromEntries(categories));
+  } catch (err) {
+    console.error('Error loading categories: ', err.message);
+    if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
+    else res.status(500).json({ message: 'Error loading categories' });
+  }
+});
+
 export default router;
