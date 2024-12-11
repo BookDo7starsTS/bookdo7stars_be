@@ -19,22 +19,24 @@ class AladinBooksJob {
       const obj = new AladinBooksJob();
       await obj.getAladinBooks('ItemNewAll');
       await obj.getAladinBooks('ItemNewSpecial');
-      await obj.getAladinBooks('ItemEditorChoice');
+      await obj.getAladinBooks('ItemEditorChoice', 'categoryId=1');
       await obj.getAladinBooks('Bestseller');
       await obj.getAladinBooks('BlogBest');
     });
   }
 
-  async getAladinBooks(queryType) {
-    const totalCount = await this.getAladinBooksCountByQueryType(queryType);
+  async getAladinBooks(queryType, ...options) {
+    const totalCount = await this.getAladinBooksCountByQueryType(queryType, options);
     for (let i = 1; i <= Math.ceil(totalCount / 50); i++) {
-      await this.fetchAladinBooksByQueryType(queryType, i);
+      await this.fetchAladinBooksByQueryType(queryType, i, options);
     }
   }
 
-  async getAladinBooksCountByQueryType(queryType) {
+  async getAladinBooksCountByQueryType(queryType, ...options) {
     const ttbKey = process.env.ALADIN_TTB_KEY;
-    const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=1&SearchTarget=Book&output=xml&Version=20131101`;
+    let url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=1&SearchTarget=Book&output=xml&Version=20131101`;
+    for (let option of options) url += `&${option}`;
+
     try {
       const response = await axios.get(url);
       const parsedData = await parseStringPromise(response.data);
@@ -46,9 +48,10 @@ class AladinBooksJob {
     }
   }
 
-  async fetchAladinBooksByQueryType(queryType, page) {
+  async fetchAladinBooksByQueryType(queryType, page, ...options) {
     const ttbKey = process.env.ALADIN_TTB_KEY;
-    const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101&Cover=Big`;
+    let url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${ttbKey}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=xml&Version=20131101&Cover=Big`;
+    for (let option of options) url += `&${option}`;
     // Fetch the data from the URL
     const response = await axios.get(url);
 
