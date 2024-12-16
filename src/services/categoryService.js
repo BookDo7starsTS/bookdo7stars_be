@@ -1,4 +1,5 @@
 import sequelize from '../config/db.js';
+import Category from '../models/category.js';
 
 class CategoryService {
   async getCategories(level) {
@@ -115,6 +116,14 @@ class CategoryService {
     }
 
     return result;
+  }
+
+  async getCategoryById(id) {
+    const category = await Category.findByPk(id);
+    if (!category) {
+      throw new Error('Category not found');
+    }
+    return category;
   }
 }
 
