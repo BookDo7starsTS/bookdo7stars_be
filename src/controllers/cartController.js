@@ -1,4 +1,5 @@
 import express from 'express';
+import cartService from '../services/cartService.js';
 
 /**
  * @swagger
@@ -50,9 +51,17 @@ router.get('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    console.log('/cart/');
+    console.log('/cart/', req.body);
+    const { bookId, quantity } = req.body;
+    console.log(bookId, quantity);
+
+    const userId = req.session.passport ? req.session.passport.user.id : null;
+    console.log(userId);
+
+    const cartItem = await cartService.addItemToCart(bookId, quantity, userId);
+    res.status(200).json({ cartItem, message: 'Cartitem successfully added' });
   } catch (err) {
-    res.status(500).json({ message: 'Error loading cart' });
+    res.status(500).json({ message: 'Error adding cart' });
   }
 });
 
