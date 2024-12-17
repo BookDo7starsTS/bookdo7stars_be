@@ -1,4 +1,6 @@
 import Book from './book.js';
+import Cart from './cart.js';
+import User from './user.js';
 import BookQueryType from './bookQueryType.js';
 
 Book.hasMany(BookQueryType, {
@@ -6,4 +8,7 @@ Book.hasMany(BookQueryType, {
   sourceKey: 'id',
 });
 
-export { Book, BookQueryType };
+Cart.belongsTo(Book, { foreignKey: 'book_id' });
+Cart.belongsTo(User, { foreignKey: 'user_id' });
+
+export { Book, BookQueryType, Cart };

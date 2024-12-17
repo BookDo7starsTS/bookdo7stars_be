@@ -1,3 +1,43 @@
-book
-userId
-유저가 로그인을 하면 그 userId를 
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
+import Book from './book.js';
+import User from './user.js';
+
+const Cart = sequelize.define(
+  'carts',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    bookId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Book,
+        key: 'id',
+      },
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 1,
+      },
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: 'id',
+      },
+    },
+  },
+  {
+    timestamps: false,
+  },
+);
+
+export default Cart;
