@@ -28,7 +28,8 @@ app.use(
     cookie: {
       secure: false, // HTTPS를 사용하면 true로 설정
       httpOnly: true,
-      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정
+      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정,
+      maxAge: 1000 * 60 * 60 * 24,
     },
   }),
 );

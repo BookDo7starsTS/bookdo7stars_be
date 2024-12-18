@@ -61,7 +61,7 @@ router.post('/', async function (req, res) {
     const cartItem = await cartService.addItemToCart(bookId, quantity, userId);
     res.status(200).json({ cartItem, message: 'Cartitem successfully added' });
   } catch (err) {
-    res.status(500).json({ message: 'Error adding cart' });
+    res.status(500).json({ message: err.message });
   }
 });
 

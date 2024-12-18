@@ -11,12 +11,25 @@ class CartService {
     if (quantity < 1) {
       throw new Error('Quantity must be at least 1');
     }
-    const newCartItem = {
-      bookId: bookId,
-      quantity: quantity,
-      userId: userId,
-    };
-    return await Cart.create(newCartItem);
+
+    try {
+      const existingCart = await Cart.findOne({ where: { bookId: bookId, userId: userId } });
+      if (existingCart) {
+        console.log(existingCart);
+        existingCart.quantity += quantity;
+        await existingCart.save();
+        return existingCart;
+      }
+      const newCartItem = {
+        bookId: bookId,
+        quantity: quantity,
+        userId: userId,
+      };
+      return await Cart.create(newCartItem);
+    } catch (err) {
+      console.error('Error in addItemToCart:', err.message);
+      throw err;
+    }
   }
 }
 
