@@ -1,6 +1,14 @@
 import Cart from '../models/cart.js';
 
 class CartService {
+  async getAllItemsInCart(userId) {
+    try {
+      return await Cart.findAll({ where: { userId: userId } });
+    } catch (err) {
+      console.err(err.message);
+    }
+  }
+
   async addItemToCart(bookId, quantity, userId) {
     console.log('SERVICE', bookId, quantity, userId);
 

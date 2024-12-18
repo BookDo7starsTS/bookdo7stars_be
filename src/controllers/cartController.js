@@ -43,7 +43,13 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    console.log('/cart/');
+    const userFromSession = req.session.passport.user;
+    if (!userFromSession) {
+      throw new Error('user from session is not found');
+    }
+    console.log(userFromSession.id);
+    const cartItems = await cartService.getAllItemsInCart(userFromSession.id);
+    res.status(200).json({ cartItems, message: 'CartItems successfully loaded' });
   } catch (err) {
     res.status(500).json({ message: 'Error loading cart' });
   }
@@ -52,13 +58,17 @@ router.get('/', async function (req, res) {
 router.post('/', async function (req, res) {
   try {
     console.log('/cart/', req.body);
-    const { bookId, quantity } = req.body;
+    const { bookId, quantity, user } = req.body;
     console.log(bookId, quantity);
 
-    const userId = req.session.passport.user.id;
-    console.log(userId);
+    const userFromSession = req.session.passport.user;
+    console.log(user);
+    if (userFromSession.name !== user.name) {
+      throw new Error('user from req.body does not match with the user from session');
+    }
+    console.log(userFromSession.id);
 
-    const cartItem = await cartService.addItemToCart(bookId, quantity, userId);
+    const cartItem = await cartService.addItemToCart(bookId, quantity, userFromSession.id);
     res.status(200).json({ cartItem, message: 'Cartitem successfully added' });
   } catch (err) {
     res.status(500).json({ message: err.message });
