@@ -14,6 +14,7 @@ const Cart = sequelize.define(
     bookId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: 'book_id',
       references: {
         model: Book,
         key: 'id',
@@ -28,7 +29,8 @@ const Cart = sequelize.define(
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
+      field: 'user_id',
       references: {
         model: User,
         key: 'id',

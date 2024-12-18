@@ -55,7 +55,7 @@ router.post('/', async function (req, res) {
     const { bookId, quantity } = req.body;
     console.log(bookId, quantity);
 
-    const userId = req.session.passport ? req.session.passport.user.id : null;
+    const userId = req.session.passport.user.id;
     console.log(userId);
 
     const cartItem = await cartService.addItemToCart(bookId, quantity, userId);
