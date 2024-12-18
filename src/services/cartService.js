@@ -1,9 +1,25 @@
 import Cart from '../models/cart.js';
+import Book from '../models/book.js';
+import User from '../models/user.js';
 
 class CartService {
   async getAllItemsInCart(userId) {
     try {
-      return await Cart.findAll({ where: { userId: userId } });
+      return await Cart.findAll({
+        where: { userId: userId },
+        attributes: { exclude: ['bookId', 'userId', 'book_id', 'user_id'] },
+        include: [
+          {
+            model: Book,
+            as: 'book',
+          },
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name', 'email'],
+          },
+        ],
+      });
     } catch (err) {
       console.err(err.message);
     }
