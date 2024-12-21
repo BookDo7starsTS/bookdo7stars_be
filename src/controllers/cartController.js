@@ -73,15 +73,27 @@ router.post('/', async function (req, res) {
   }
 });
 
-router.put('/:id', async function (req, res) {
+router.delete('/:id', async function (req, res) {
   try {
-    console.log('/cart/:id');
+    console.log('카트 delete컨트롤러 시작!');
+    const userFromSession = req.session?.passport?.user;
+    console.log('User from session에 있는 id는 이거다 ==> ', userFromSession.id);
+    const itemId = req.params.id;
+    if (!itemId) {
+      return res.status(400).json({ message: 'Bad Request: Missing item ID' });
+    }
+    const result = await cartService.deleteItemFromCart(itemId, userFromSession.id);
+    if (result) {
+      res.status(200).json({ message: `Item with ID ${itemId} was successfully deleted` });
+    } else {
+      res.status(404).json({ message: `Item with ID ${itemId} not found in cart` });
+    }
   } catch (err) {
-    res.status(500).json({ message: 'Error loading cart' });
+    res.status(500).json({ message: `Error deleting item: ${err.message}` });
   }
 });
 
-router.delete('/:id', async function (req, res) {
+router.put('/:id', async function (req, res) {
   try {
     console.log('/cart/:id');
   } catch (err) {

@@ -86,6 +86,22 @@ class CartService {
       throw err;
     }
   }
+
+  async deleteItemFromCart(bookId, userId) {
+    try {
+      const item = await Cart.findOne({ where: { bookId: bookId, userId: userId } });
+      if (!item) {
+        return false;
+      }
+      await Cart.destroy({
+        where: { bookId: bookId, userId: userId },
+      });
+      return true;
+    } catch (error) {
+      console.error('Error in deleteItemFromCart: error.message');
+      throw new Error('Error deleting item from cart');
+    }
+  }
 }
 
 export default new CartService();
