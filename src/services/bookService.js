@@ -161,7 +161,7 @@ class BookService {
     }
 
     if (!categoryIds) {
-      throw new Error('categoryIdsare missing');
+      throw new Error('categoryIds are missing');
     }
 
     if (!Object.values(QueryType).includes(queryType)) {
@@ -207,6 +207,27 @@ class BookService {
     }
 
     return banners;
+  }
+
+  async getBooksByCategoryId(categoryIds, page = 1, pageSize = 20) {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+
+    page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
+    const books = await Book.findAndCountAll({
+      where: {
+        category_id: {
+          [Op.in]: categoryIds,
+        },
+      },
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
+
+    console.log('BOOKS', books);
+
+    return books;
   }
 }
 
