@@ -19,6 +19,8 @@ class BookService {
       orderTerm,
       start_price,
       end_price,
+      start_rate,
+      end_rate,
     } = query;
 
     const whereCondition = {};
@@ -57,6 +59,12 @@ class BookService {
     if (start_price && end_price) {
       whereCondition.price_sales = {
         [Op.between]: [start_price, end_price],
+      };
+    }
+
+    if (start_rate && end_rate) {
+      whereCondition.customer_review_rank = {
+        [Op.between]: [start_rate, end_rate],
       };
     }
 
