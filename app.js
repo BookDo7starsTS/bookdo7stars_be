@@ -1,6 +1,6 @@
 import express from 'express';
 import setupSwagger from './src/config/swagger.js';
-import { userController, bookController, categoryController } from './src/controllers/index.js';
+import { userController, bookController, categoryController, wishlistController } from './src/controllers/index.js';
 import cors from 'cors';
 import './src/job/SaveAladinBooks.js';
 import './src/models/index.js';
@@ -46,6 +46,7 @@ setupSwagger(app);
 app.locals.pretty = true;
 
 app.use('/user', userController);
+app.use('/wishlist', wishlistController);
 app.use('/book', bookController);
 app.use('/category', categoryController);
 
