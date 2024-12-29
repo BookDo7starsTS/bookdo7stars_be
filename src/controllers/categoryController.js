@@ -70,7 +70,9 @@ router.get('/categoriesMap/:id', async function (req, res) {
   try {
     const id = req.params.id;
     const categories = await categoryService.getCategoriesById(id);
-    console.log('CATEGORIES, ', categories);
+    console.log('categories', categories);
+    console.log('Object.fromEntries(categories):', Object.fromEntries(categories));
+
     res.status(200).json(Object.fromEntries(categories));
   } catch (err) {
     console.error('Error loading categories: ', err.message);

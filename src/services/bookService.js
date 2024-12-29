@@ -225,8 +225,6 @@ class BookService {
       offset: (page - 1) * pageSize,
     });
 
-    console.log('BOOKS', books);
-
     return books;
   }
 }

@@ -93,8 +93,8 @@ class CategoryService {
       result.push(category.id);
     }
     let categories = new Map();
-    for (let id of result) {
-      categories.set(id, await this.getChildrenCategories(id));
+    for (let i = result.length - 1; i >= 0; i--) {
+      categories.set(result[i], await this.getChildrenCategories(result[i]));
     }
     return categories;
   }
