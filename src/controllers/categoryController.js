@@ -71,9 +71,21 @@ router.get('/categoriesMap/:id', async function (req, res) {
     const id = req.params.id;
     const categories = await categoryService.getCategoriesById(id);
     console.log('categories', categories);
+
+    let result = '{';
+    const categoriesIterator = categories.entries();
+    for (const [key, value] of categoriesIterator) {
+      console.log(key); // Outputs: 'name', 'age', 'city'
+      const row = value;
+      result += key + ':' + JSON.stringify(row);
+      result += ',';
+    }
+    result = result.substring(0, result.length - 1) + '}';
+    console.log('result: ' + result);
+
     console.log('Object.fromEntries(categories):', Object.fromEntries(categories));
 
-    res.status(200).json(Object.fromEntries(categories));
+    res.status(200).send(result);
   } catch (err) {
     console.error('Error loading categories: ', err.message);
     if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
