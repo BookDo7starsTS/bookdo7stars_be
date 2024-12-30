@@ -537,11 +537,10 @@ router.get('/search/:isbn', async function (req, res) {
 router.get('/category/:categoryId', async function (req, res) {
   try {
     const categoryId = req.params.categoryId;
-    const { page, pageSize } = req.query;
+    const { page, pageSize, orderTerm, categoryName } = req.query;
     const childrenIds = await categoryService.getChildrenIds(categoryId);
 
-    console.log(categoryId, page, pageSize);
-    const books = await bookService.getBooksByCategoryId(childrenIds, page, pageSize);
+    const books = await bookService.getBooksByCategoryId(childrenIds, page, pageSize, orderTerm, categoryName);
     res.status(200).json({ books, message: `Books with ${categoryId} loaded successfully` });
   } catch (err) {
     console.error('Error loading books: ', err.message);

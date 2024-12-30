@@ -70,20 +70,12 @@ router.get('/categoriesMap/:id', async function (req, res) {
   try {
     const id = req.params.id;
     const categories = await categoryService.getCategoriesById(id);
-    console.log('categories', categories);
 
-    let result = '{';
-    const categoriesIterator = categories.entries();
-    for (const [key, value] of categoriesIterator) {
-      console.log(key); // Outputs: 'name', 'age', 'city'
-      const row = value;
-      result += key + ':' + JSON.stringify(row);
-      result += ',';
+    let result = {};
+    for (const [key, value] of categories) {
+      const strKey = key + ' '; // 키를 문자열로 변환
+      result[strKey] = value;
     }
-    result = result.substring(0, result.length - 1) + '}';
-    console.log('result: ' + result);
-
-    console.log('Object.fromEntries(categories):', Object.fromEntries(categories));
 
     res.status(200).send(result);
   } catch (err) {

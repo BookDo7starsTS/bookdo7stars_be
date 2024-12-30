@@ -209,18 +209,20 @@ class BookService {
     return banners;
   }
 
-  async getBooksByCategoryId(categoryIds, page = 1, pageSize = 20) {
+  async getBooksByCategoryId(categoryIds, page = 1, pageSize = 20, orderTerm, categoryName) {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
 
     page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
     pageSize = Number.isInteger(parsedPageSize) && parsedPageSize > 0 ? parsedPageSize : 20;
+    const order = this.getOrderType(orderTerm, categoryName);
     const books = await Book.findAndCountAll({
       where: {
         category_id: {
           [Op.in]: categoryIds,
         },
       },
+      order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
     });
