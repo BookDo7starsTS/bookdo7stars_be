@@ -43,7 +43,6 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    console.log('nicht hier???');
     const userFromSession = req.session?.passport?.user;
     if (!userFromSession) {
       return res.status(400).json({ message: 'User Not Found' });
@@ -65,7 +64,6 @@ router.post('/', async function (req, res) {
     }
 
     const cartItem = await cartService.addItemToCart(bookId, quantity, userFromSession.id);
-    console.log('cartItem', cartItem);
     res.status(200).json({ cartItem, message: `${cartItem.book.title}` + ' is added successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
