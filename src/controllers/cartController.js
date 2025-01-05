@@ -43,11 +43,11 @@ const router = express.Router();
  */
 router.get('/', async function (req, res) {
   try {
-    const userFromSession = req.session.passport.user;
+    console.log('nicht hier???');
+    const userFromSession = req.session?.passport?.user;
     if (!userFromSession) {
-      throw new Error('user from session is not found');
+      return res.status(400).json({ message: 'User Not Found' });
     }
-    console.log(userFromSession.id);
     const cartItems = await cartService.getAllItemsInCart(userFromSession.id);
     res.status(200).json({ cartItems, message: 'CartItems successfully loaded' });
   } catch (err) {
@@ -57,17 +57,16 @@ router.get('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    console.log('/cart/', req.body);
     const { bookId, quantity } = req.body;
-    console.log('req.session', req.session);
 
     const userFromSession = req.session?.passport?.user;
-    console.log('userFromSession', userFromSession.id);
-    console.log(userFromSession.id);
+    if (!userFromSession) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
 
     const cartItem = await cartService.addItemToCart(bookId, quantity, userFromSession.id);
     console.log('cartItem', cartItem);
-    res.status(200).json({ cartItem, message: `${cartItem.book.title}` + ' is successfully added' });
+    res.status(200).json({ cartItem, message: `${cartItem.book.title}` + ' is added successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,15 +74,33 @@ router.post('/', async function (req, res) {
 
 router.put('/:id', async function (req, res) {
   try {
-    console.log('/cart/:id');
+    const bookId = req.params.id;
+    const { quantity } = req.body;
+    console.log(req);
+
+    const userFromSession = req.session?.passport?.user;
+    if (!userFromSession) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
+
+    const cartItem = await cartService.updateItemInCart(bookId, quantity, userFromSession.id);
+    res.status(200).json({ cartItem, message: `${cartItem.book.title}` + ' is updated successfully' });
   } catch (err) {
+    console.log(err.message);
     res.status(500).json({ message: 'Error loading cart' });
   }
 });
 
 router.delete('/:id', async function (req, res) {
   try {
-    console.log('/cart/:id');
+    const bookId = req.params.id;
+    const userFromSession = req.session?.passport?.user;
+    if (!userFromSession) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
+
+    await cartService.deleteItemInCart(bookId, userFromSession.id);
+    res.status(200).json({ message: 'successfully deleted!' });
   } catch (err) {
     res.status(500).json({ message: 'Error loading cart' });
   }
