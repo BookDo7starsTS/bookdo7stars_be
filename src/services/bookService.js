@@ -1,11 +1,12 @@
 import Book from '../models/book.js';
+import Wishlist from '../models/wishlist.js';
 import Banner from '../models/banner.js';
 import BookQueryType from '../models/bookQueryType.js';
 import { QueryType } from '../enum/queryTypeEnum.js';
 import { Op, literal } from 'sequelize';
 
 class BookService {
-  async getAllBooks(query) {
+  async getAllBooks(query, user) {
     const {
       page = 1,
       pageSize = 50,
@@ -66,7 +67,20 @@ class BookService {
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
+      include: [
+        {
+          model: Wishlist,
+          where: { user_id: user ? user.id : null }, // 특정 사용자에 대해 북마크된 책만 가져옴
+          required: false, // 외부 조인 (Book은 있지만 Bookmark가 없는 경우도 포함)
+          attributes: ['book_id'], // 북마크된 책만 표시하고, 북마크가 없으면 null
+        },
+      ],
     });
+
+    books.rows = books.rows.map((book) => ({
+      ...book.toJSON(),
+      isBookmarked: book.wishlists.length > 0, // 북마크가 있으면 true, 없으면 false
+    }));
     return books;
   }
 
@@ -78,7 +92,7 @@ class BookService {
     return book;
   }
 
-  async getBooksByQueryType(queryType, page = 1, pageSize = 20) {
+  async getBooksByQueryType(queryType, user, page = 1, pageSize = 20) {
     if (!queryType) {
       throw new Error('Query type is missing');
     }
@@ -101,13 +115,22 @@ class BookService {
           where: { query_type: queryType }, // Filter by query_type
           required: true, // INNER JOIN
         },
+        {
+          model: Wishlist,
+          where: { user_id: user ? user.id : null }, // 특정 사용자에 대해 북마크된 책만 가져옴
+          required: false, // 외부 조인 (Book은 있지만 Bookmark가 없는 경우도 포함)
+          attributes: ['book_id'], // 북마크된 책만 표시하고, 북마크가 없으면 null
+        },
       ],
       order,
       limit: pageSize,
       offset: (page - 1) * pageSize,
     });
 
-    return books;
+    return books.map((book) => ({
+      ...book.toJSON(),
+      isBookmarked: book.wishlists.length > 0, // 북마크가 있으면 true, 없으면 false
+    }));
   }
 
   async getBookByIsbn(isbn) {
