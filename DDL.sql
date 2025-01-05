@@ -138,7 +138,7 @@ CREATE TABLE carts (
 	user_id INTEGER,
 
 	FOREIGN KEY (book_id) REFERENCES books(id),
-  	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 )
 
 CREATE TABLE categories

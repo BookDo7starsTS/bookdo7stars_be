@@ -72,7 +72,7 @@ router.post('/', async function (req, res) {
   }
 });
 
-router.put('/:id', async function (req, res) {
+router.delete('/:id', async function (req, res) {
   try {
     const bookId = req.params.id;
     const { quantity } = req.body;
@@ -91,7 +91,7 @@ router.put('/:id', async function (req, res) {
   }
 });
 
-router.delete('/:id', async function (req, res) {
+router.put('/:id', async function (req, res) {
   try {
     const bookId = req.params.id;
     const userFromSession = req.session?.passport?.user;
