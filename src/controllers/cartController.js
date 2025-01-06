@@ -56,15 +56,32 @@ router.get('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    const { bookId, quantity } = req.body;
+    console.log('/cart/', req.body);
+    const cartItemDto = req.body;
 
     const userFromSession = req.session?.passport?.user;
     if (!userFromSession) {
       return res.status(400).json({ message: 'User Not Found' });
     }
 
-    const cartItem = await cartService.addItemToCart(bookId, quantity, userFromSession.id);
-    res.status(200).json({ cartItem, message: `${cartItem.book.title}` + ' is added successfully' });
+    let cartItems = [];
+    if (cartItemDto.length === 1) {
+      const cartItem = await cartService.addItemToCart(
+        cartItemDto[0].bookId,
+        cartItemDto[0].quantity,
+        userFromSession.id,
+      );
+      cartItems.push(cartItem);
+      return res.status(200).json({ cartItems, message: `${cartItem.book.title}` + ' is successfully added' });
+    }
+
+    if (cartItemDto.length > 1) {
+      cartItemDto.map(async (item) => {
+        const cartItem = await cartService.addItemToCart(item.bookId, item.quantity, userFromSession.id);
+        cartItems.push(cartItem);
+      });
+      return res.status(200).json({ cartItems, message: 'Selected books are successfully added' });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
