@@ -1,6 +1,12 @@
 import express from 'express';
 import setupSwagger from './src/config/swagger.js';
-import { userController, bookController, categoryController, cartController, wishlistController } from './src/controllers/index.js';
+import {
+  userController,
+  bookController,
+  categoryController,
+  cartController,
+  wishlistController,
+} from './src/controllers/index.js';
 import cors from 'cors';
 import './src/job/SaveAladinBooks.js';
 import './src/models/index.js';
