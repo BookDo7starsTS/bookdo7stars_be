@@ -1,6 +1,6 @@
 import express from 'express';
 import setupSwagger from './src/config/swagger.js';
-import { userController, bookController, categoryController, wishlistController } from './src/controllers/index.js';
+import { userController, bookController, categoryController, cartController, wishlistController } from './src/controllers/index.js';
 import cors from 'cors';
 import './src/job/SaveAladinBooks.js';
 import './src/models/index.js';
@@ -28,7 +28,8 @@ app.use(
     cookie: {
       secure: false, // HTTPS를 사용하면 true로 설정
       httpOnly: true,
-      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정
+      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정,
+      maxAge: 1000 * 60 * 60 * 24,
     },
   }),
 );
@@ -49,6 +50,7 @@ app.use('/user', userController);
 app.use('/wishlist', wishlistController);
 app.use('/book', bookController);
 app.use('/category', categoryController);
+app.use('/cart', cartController);
 
 app.listen(4000, () => {
   console.log('Server is running on port 4000');
