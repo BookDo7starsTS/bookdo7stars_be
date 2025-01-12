@@ -140,6 +140,9 @@ router.post('/:bookId', async function (req, res) {
     const { content } = req.body;
 
     const userFromSession = req.session?.passport?.user;
+    if (!userFromSession) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
 
     const review = await reviewService.addReviewInBook(userFromSession.id, bookId, content);
     res.status(200).json({ review, message: 'review is successfully added' });
@@ -148,4 +151,101 @@ router.post('/:bookId', async function (req, res) {
   }
 });
 
+/**
+ * @swagger
+ * /review:
+ *   post:
+ *     summary: 책에 리뷰를 수정합니다.
+ *     tags: [Review]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 bookId:
+ *                   type: string
+ *                   description: 책의 고유 ID
+ *                   example: "123456789"
+ *                 content:
+ *                   type: string
+ *                   description: 리뷰 텍스트
+ *                   example: "리뷰 입니다"
+ *                 userId:
+ *                   type: string
+ *                   description: 리뷰를 단 유저 ID
+ *                   example: 3
+ *     responses:
+ *       200:
+ *         description: 리뷰가 책에 성공적으로 추가되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 review:
+ *                   type: object
+ *                   description: 수정된 리뷰
+ *                   review:
+ *                     type: object
+ *                     properties:
+ *                       bookId:
+ *                          type: string
+ *                          description: 책의 고유 ID
+ *                          example: "123456789"
+ *                       content:
+ *                          type: string
+ *                          description: 리뷰 텍스트
+ *                          example: "리뷰 입니다"
+ *                       userId:
+ *                          type: string
+ *                          description: 리뷰를 단 유저 ID
+ *                          example: 3
+ *                    message:
+ *                      type: string
+ *                      description: 결과 메시지
+ *                      example: "Review is successfully updated"
+ *       400:
+ *         description: 사용자 정보를 찾을 수 없음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 에러 메시지
+ *                   example: "User Not Found"
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 에러 메시지
+ *                   example: "Internal Server Error"
+ */
+router.put('/:bookId', async function (req, res) {
+  try {
+    const bookId = req.params.bookId;
+    const { content } = req.body;
+
+    console.log(req.session);
+    const userFromSession = req.session?.passport?.user;
+    if (!userFromSession) {
+      return res.status(400).json({ message: 'User Not Found' });
+    }
+
+    const review = await reviewService.updateReview(userFromSession.id, bookId, content);
+    res.status(200).json({ review, message: 'review is successfully added' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router;

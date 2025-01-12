@@ -142,17 +142,16 @@ CREATE TABLE carts (
 )
 
 CREATE TABLE reviews (
-	id SERIAL PRIMARY KEY,
-	book_id INTEGER NOT NULL,
-	content VARCHAR(1000) NOT NULL,
-	user_id INTEGER,
-  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  book_id INTEGER NOT NULL,
+  content VARCHAR(1000) NOT NULL,
+  user_id INTEGER,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-	FOREIGN KEY (book_id) REFERENCES books(id),
+  FOREIGN KEY (book_id) REFERENCES books(id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-)
-
+);
 CREATE TABLE categories
 (
     id BIGINT PRIMARY KEY,

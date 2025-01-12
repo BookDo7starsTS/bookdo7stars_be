@@ -33,9 +33,17 @@ const Review = sequelize.define(
         key: 'id',
       },
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at', // 데이터베이스의 컬럼 이름과 매핑
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updated_at', // 데이터베이스의 컬럼 이름과 매핑
+    },
   },
   {
-    timestamps: false,
+    timestamps: true, // createdAt, updatedAt 활성화
   },
 );
 

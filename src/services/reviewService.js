@@ -67,6 +67,29 @@ class ReviewService {
       throw err;
     }
   }
+
+  async updateReview(userId, bookId, content) {
+    if (!bookId || !content) {
+      throw new Error('bookId and content are required');
+    }
+
+    try {
+      const existingReview = await Review.findOne({
+        where: { bookId: bookId, userId: userId },
+      });
+
+      if (!existingReview) {
+        throw new Error('Review not found');
+      } else {
+        existingReview.content = content;
+        await existingReview.save();
+        return existingReview;
+      }
+    } catch (err) {
+      console.error('Error in adding Review:', err.message);
+      throw err;
+    }
+  }
 }
 
 export default new ReviewService();
