@@ -68,14 +68,14 @@ class ReviewService {
     }
   }
 
-  async updateReview(userId, bookId, content) {
+  async updateReview(userId, bookId, reviewId, content) {
     if (!bookId || !content) {
       throw new Error('bookId and content are required');
     }
 
     try {
       const existingReview = await Review.findOne({
-        where: { bookId: bookId, userId: userId },
+        where: { id: reviewId, bookId: bookId, userId: userId },
       });
 
       if (!existingReview) {
@@ -86,7 +86,18 @@ class ReviewService {
         return existingReview;
       }
     } catch (err) {
-      console.error('Error in adding Review:', err.message);
+      console.error('Error in updating Review:', err.message);
+      throw err;
+    }
+  }
+
+  async deleteReview(userId, bookId, reviewId) {
+    try {
+      await Review.destroy({
+        where: { id: reviewId, bookId: bookId, userId: userId },
+      });
+    } catch (err) {
+      console.error('Error in deleting Review:', err.message);
       throw err;
     }
   }
