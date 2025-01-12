@@ -19,7 +19,6 @@ User.hasMany(Wishlist, {
   sourceKey: 'id',
 });
 
-export { Book, BookQueryType, User, Wishlist };
 Cart.belongsTo(Book, { foreignKey: 'book_id' });
 Cart.belongsTo(User, { foreignKey: 'user_id' });
 
@@ -29,4 +28,4 @@ User.hasOne(Cart, { foreignKey: 'user_id', as: 'cart' }); // User는 하나의 C
 // Book 모델
 Book.hasMany(Cart, { foreignKey: 'book_id', as: 'carts' }); // Book은 여러 Cart에 속할 수 있음
 
-export { Book, BookQueryType, Cart };
+export { Book, BookQueryType, Cart, User, Wishlist };

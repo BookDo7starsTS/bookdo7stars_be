@@ -29,7 +29,10 @@ router.get('/', async function (req, res) {
 router.post('/toggle', async function (req, res) {
   try {
     const user = req.session?.passport?.user;
-    if (!user) res.status(500).json({ message: 'Error registering wishlist' });
+    if (!user) {
+      res.status(500).json({ message: 'Error registering wishlist' });
+      return;
+    }
     const bookId = req.body.bookId;
     const wishlist = await service.toggleWishItem(user.id, bookId);
     res.status(201).json({ book_id: wishlist.book_id, message: 'Wishlist registered successfully' });

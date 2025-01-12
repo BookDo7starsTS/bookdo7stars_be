@@ -126,8 +126,9 @@ router.get('/', async function (req, res) {
 
 router.get('/detail/:id', async function (req, res) {
   try {
+    const user = req.session?.passport?.user;
     const id = req.params.id;
-    const book = await bookService.getBookDetailById(id);
+    const book = await bookService.getBookDetailById(id, user);
     res.status(200).json({ book, message: 'Book detail loaded successfully' });
   } catch (err) {
     console.error('Error loading book: ', err.message);
