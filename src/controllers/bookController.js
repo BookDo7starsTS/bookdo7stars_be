@@ -279,9 +279,10 @@ router.get('/mainpage', async function (req, res) {
  */
 router.get('/mainpage/bestseller', async function (req, res) {
   try {
+    const user = req.session?.passport?.user;
     const { categoryId, page, pageSize } = req.query;
     const childrenIds = await categoryService.getChildrenIds(categoryId);
-    const books = await bookService.getBooksByQueryTypeAndCategoryIds('Bestseller', childrenIds, page, pageSize);
+    const books = await bookService.getBooksByQueryTypeAndCategoryIds('Bestseller', childrenIds, user, page, pageSize);
     res.status(200).json({ books, message: 'BestSeller Books by category Ids loaded successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Error loading BestSeller Books' });

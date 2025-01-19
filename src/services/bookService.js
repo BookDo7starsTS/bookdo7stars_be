@@ -200,7 +200,7 @@ class BookService {
     return order;
   }
 
-  async getBooksByQueryTypeAndCategoryIds(queryType, categoryIds, page = 1, pageSize = 20) {
+  async getBooksByQueryTypeAndCategoryIds(queryType, categoryIds, user, page = 1, pageSize = 20) {
     if (!queryType) {
       throw new Error('Query type is missing');
     }
@@ -228,6 +228,12 @@ class BookService {
           }, // Filter by query_type
           required: true, // INNER JOIN
         },
+        {
+          model: Wishlist,
+          where: { user_id: user ? user.id : null }, // 특정 사용자에 대해 북마크된 책만 가져옴
+          required: false, // 외부 조인 (Book은 있지만 Bookmark가 없는 경우도 포함)
+          attributes: ['book_id'], // 북마크된 책만 표시하고, 북마크가 없으면 null
+        },
       ],
       where: {
         category_id: {
@@ -238,7 +244,10 @@ class BookService {
       offset: (page - 1) * pageSize,
     });
 
-    return books;
+    return books.map((book) => ({
+      ...book.toJSON(),
+      isBookmarked: book.wishlists.length > 0, // 북마크가 있으면 true, 없으면 false
+    }));
   }
 
   async getBanners(baseUrl) {
