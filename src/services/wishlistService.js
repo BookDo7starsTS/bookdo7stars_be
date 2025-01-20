@@ -42,6 +42,17 @@ class WishlistService {
     return newWishlistItem;
   }
 
+  async createWishlist(userId, bookIds) {
+    const result = [];
+    for (const bookId of bookIds) {
+      const book = await this.getWishItem(userId, bookId);
+      if (book) continue;
+      const newWishlistItem = await Wishlist.create({ user_id: userId, book_id: bookId });
+      result.push(newWishlistItem);
+    }
+    return result;
+  }
+
   async deleteWishlist(userId, bookIds) {
     const deleted = await Wishlist.destroy({
       where: {

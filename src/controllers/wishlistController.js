@@ -33,8 +33,17 @@ router.post('/toggle', async function (req, res) {
       res.status(500).json({ message: 'Error registering wishlist' });
       return;
     }
-    const bookId = req.body.bookId;
-    const wishlist = await service.toggleWishItem(user.id, bookId);
+    const bookIds = req.body.bookId;
+    if (!Array.isArray(bookIds) || bookIds.length === 0) {
+      return res.status(400).json({ message: 'bookIds must be a non-empty array' });
+    }
+    let wishlist = null;
+    if (bookIds.length === 1) {
+      wishlist = await service.toggleWishItem(user.id, bookIds[0]);
+    } else {
+      wishlist = service.createWishlist(user.id, bookIds);
+    }
+
     res.status(201).json({ book_id: wishlist.book_id, message: 'Wishlist registered successfully' });
   } catch (err) {
     if (err.errors != null && err.errors[0].message != null) res.status(500).json({ message: err.errors[0].message });
