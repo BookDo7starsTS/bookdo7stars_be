@@ -5,6 +5,7 @@ import {
   bookController,
   categoryController,
   cartController,
+  wishlistController,
   reviewController,
 } from './src/controllers/index.js';
 import cors from 'cors';
@@ -53,6 +54,7 @@ setupSwagger(app);
 app.locals.pretty = true;
 
 app.use('/user', userController);
+app.use('/wishlist', wishlistController);
 app.use('/book', bookController);
 app.use('/category', categoryController);
 app.use('/cart', cartController);
