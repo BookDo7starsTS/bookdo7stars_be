@@ -7,6 +7,7 @@ import {
   cartController,
   wishlistController,
   reviewController,
+  orderController,
 } from './src/controllers/index.js';
 import cors from 'cors';
 import './src/job/SaveAladinBooks.js';
@@ -59,6 +60,7 @@ app.use('/book', bookController);
 app.use('/category', categoryController);
 app.use('/cart', cartController);
 app.use('/review', reviewController);
+app.use('/order', orderController);
 
 app.listen(4000, () => {
   console.log('Server is running on port 4000');
