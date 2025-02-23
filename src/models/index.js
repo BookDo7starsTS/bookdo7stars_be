@@ -4,6 +4,8 @@ import User from './user.js';
 import Review from './review.js';
 import BookQueryType from './bookQueryType.js';
 import Wishlist from './wishlist.js';
+import Order from './order.js';
+import OrderDetails from './orderDetails.js';
 
 Book.hasMany(BookQueryType, {
   foreignKey: 'book_id',
@@ -33,4 +35,12 @@ User.hasMany(Review, { foreignKey: 'user_id', as: 'review' }); // User는 여러
 Book.hasMany(Cart, { foreignKey: 'book_id', as: 'carts' }); // Book은 여러 Cart에 속할 수 있음
 Book.hasOne(Review, { foreignKey: 'book_id', as: 'review' });
 
-export { Book, BookQueryType, Cart, User, Wishlist };
+Book.hasMany(OrderDetails, { foreignKey: 'book_id', as: 'orderDetails' });
+Order.hasMany(OrderDetails, { foreignKey: 'order_id', as: 'orderDetails' });
+User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+
+OrderDetails.belongsTo(Order);
+OrderDetails.belongsTo(Book);
+Order.belongsTo(User);
+
+export { Book, BookQueryType, Cart, User, Wishlist, Order, OrderDetails };

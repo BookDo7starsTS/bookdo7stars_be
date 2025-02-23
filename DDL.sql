@@ -145,7 +145,29 @@ CREATE TABLE carts (
 
 	FOREIGN KEY (book_id) REFERENCES books(id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-)
+);
+
+CREATE TABLE orders (
+	id SERIAL PRIMARY KEY,
+	user_id INTEGER,
+  total_price NUMERIC,
+  order_number VARCHAR(200),
+  address VARCHAR(200),
+  contact VARCHAR(200),
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE order_details (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    quantity INTEGER DEFAULT 1 CHECK (quantity > 0),
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
 
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
