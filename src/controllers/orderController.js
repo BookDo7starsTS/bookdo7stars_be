@@ -91,15 +91,14 @@ const router = express.Router();
  */
 router.post('/', async function (req, res) {
   try {
-    const { address, contact, orderedBooks, totalPrice } = req.body.orderContents;
+    const { shipInfo, orderedItems, totalPrice } = req.body;
 
-    console.log('ORDER CONTENTS', req.body.orderContents);
     const userFromSession = req.session?.passport?.user;
     if (!userFromSession) {
-      return res.status(400).json({ message: 'xxx' });
+      return res.status(400).json({ message: 'user not found' });
     }
 
-    const orderNumber = await orderService.makeOrder(userFromSession.id, address, contact, orderedBooks, totalPrice);
+    const orderNumber = await orderService.makeOrder(userFromSession.id, shipInfo, orderedItems, totalPrice);
     res.status(200).json({ orderNumber: orderNumber, message: 'successfully ordered' });
   } catch (err) {
     res.status(500).json({ message: err.message });

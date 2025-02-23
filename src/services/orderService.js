@@ -5,8 +5,8 @@ import OrderDetails from '../models/orderDetails.js';
 import { Op, literal } from 'sequelize';
 
 class OrderService {
-  async makeOrder(userId, address, contact, orderedBooks, totalPrice) {
-    if (!address || !contact || !orderedBooks) {
+  async makeOrder(userId, shipInfo, orderedBooks, totalPrice) {
+    if (!shipInfo || !orderedBooks) {
       throw new Error('Required Information is missing');
     }
 
@@ -14,8 +14,10 @@ class OrderService {
       const orderNumber = generateOrderNumber();
       const orderDto = {
         userId: userId,
-        address: address,
-        contact: contact,
+        name: shipInfo.name,
+        zipCode: shipInfo.zipCode,
+        address: shipInfo.address1,
+        contact: shipInfo.phone,
         totalPrice: totalPrice,
         orderNumber: orderNumber,
       };
@@ -29,10 +31,9 @@ class OrderService {
 
       const orderDetailDtos = orderedBooks.map((element) => ({
         ...orderDetailDto,
-        bookId: element.bookId,
+        bookId: element.book.id,
         quantity: element.quantity,
       }));
-      console.log(orderDetailDtos);
 
       orderDetailDtos.map(async (orderDetail) => await OrderDetails.create(orderDetail));
 
