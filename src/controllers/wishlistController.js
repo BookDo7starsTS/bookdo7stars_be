@@ -13,7 +13,10 @@ const router = express.Router();
 router.get('/', async function (req, res) {
   try {
     const user = req.session?.passport?.user;
-    if (!user) res.status(500).json({ message: 'Error retrieving wishlist' });
+    if (!user) {
+      res.status(500).json({ message: 'Error retrieving wishlist' });
+      return;
+    }
 
     const { page, pageSize } = req.query;
     const wishlist = await service.getWishlist(user.id, page, pageSize);

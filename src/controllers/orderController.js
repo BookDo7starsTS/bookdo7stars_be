@@ -106,4 +106,21 @@ router.post('/', async function (req, res) {
   }
 });
 
+router.get('/history', async function (req, res) {
+  try {
+    const userFromSession = req.session?.passport?.user;
+    if (!userFromSession) {
+      res.status(400).json({ message: 'xxx' });
+      return;
+    }
+
+    const orders = await orderService.getOrders(userFromSession.id);
+    res
+      .status(200)
+      .json({ orderHistory: orders.rows, count: orders.count, message: 'Order History loaded successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
