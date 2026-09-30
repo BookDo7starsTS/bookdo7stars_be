@@ -180,6 +180,7 @@ CREATE TABLE reviews (
   FOREIGN KEY (book_id) REFERENCES books(id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
+
 CREATE TABLE categories
 (
     id BIGINT PRIMARY KEY,
@@ -195,6 +196,7 @@ CREATE TABLE banners (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 insert into banners values ('image1.jpg',352204020);
 insert into banners values ('image2.jpg',352920734);
 insert into banners values ('image3.jpg',351975295);
