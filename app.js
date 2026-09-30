@@ -19,24 +19,34 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+dotenv.config();
+
+const isProduction = process.env.NODE_ENV === 'production';
+const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (isProduction && !sessionSecret) {
+  throw new Error('SESSION_SECRET must be configured in production');
+}
+
 const app = express();
+app.set('trust proxy', 1);
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: frontendOrigin,
     credentials: true,
   }),
 );
 
-dotenv.config();
 app.use(
   session({
-    secret: 'your_secret_key',
+    secret: sessionSecret || 'local-development-session-secret',
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: false, // HTTPS를 사용하면 true로 설정
+      secure: isProduction,
       httpOnly: true,
-      sameSite: 'Lax', // 다른 도메인 간 쿠키 전송을 허용하려면 'none'으로 설정,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24,
     },
   }),
@@ -62,6 +72,7 @@ app.use('/cart', cartController);
 app.use('/review', reviewController);
 app.use('/order', orderController);
 
-app.listen(4000, () => {
-  console.log('Server is running on port 4000');
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
