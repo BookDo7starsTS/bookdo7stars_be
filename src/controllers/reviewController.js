@@ -13,11 +13,11 @@ const router = express.Router();
  * @swagger
  * /review:
  *   get:
- *     summary: 데이터베이스에 있는 review들 중에 해당 책의 리뷰을 불러옵니다.
+ *     summary: Retrieve reviews for a specific book.
  *     tags: [Get all Reviews of a specific book]
  *     responses:
  *       200:
- *         description: review 목록이 성공적으로 불려졌습니다.
+ *         description: Reviews loaded successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -25,15 +25,15 @@ const router = express.Router();
  *               properties:
  *                 bookId:
  *                   type: string
- *                   description: 책의 고유 ID
+ *                   description: Unique book ID
  *                   example: "123456789"
  *                 reviews:
  *                   type: object
- *                   description: review 배열
+ *                   description: Array of review objects
  *                   example: [{}]
  *
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -41,7 +41,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: Error loading reviews
  */
 router.get('/:bookId', async function (req, res) {
@@ -56,63 +56,47 @@ router.get('/:bookId', async function (req, res) {
 });
 /**
  * @swagger
- * /review:
+ * /review/{bookId}:
  *   post:
- *     summary: 책에 리뷰를 추가합니다.
+ *     summary: Add a review to a book.
  *     tags: [Review]
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         description: Unique book ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 bookId:
- *                   type: string
- *                   description: 책의 고유 ID
- *                   example: "123456789"
- *                 content:
- *                   type: string
- *                   description: 리뷰 텍스트
- *                   example: "리뷰 입니다"
- *                 userId:
- *                   type: string
- *                   description: 리뷰를 단 유저 ID
- *                   example: 3
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Review text
+ *                 example: "This is a review."
  *     responses:
  *       200:
- *         description: 리뷰가 책에 성공적으로 추가되었습니다.
+ *         description: Review added successfully.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 reviews:
- *                   type: array
- *                   description: 추가된 리뷰들
- *                   reviews:
- *                     type: object
- *                     properties:
- *                       bookId:
- *                          type: string
- *                          description: 책의 고유 ID
- *                          example: "123456789"
- *                       content:
- *                          type: string
- *                          description: 리뷰 텍스트
- *                          example: "리뷰 입니다"
- *                       userId:
- *                          type: string
- *                          description: 리뷰를 단 유저 ID
- *                          example: 3
- *                    message:
- *                      type: string
- *                      description: 결과 메시지
- *                      example: "Review is successfully added"
+ *                 review:
+ *                   type: object
+ *                   description: Added review
+ *                 message:
+ *                   type: string
+ *                   description: Result message
+ *                   example: "Review is successfully added"
  *       400:
- *         description: 사용자 정보를 찾을 수 없음
+ *         description: User information not found
  *         content:
  *           application/json:
  *             schema:
@@ -120,10 +104,10 @@ router.get('/:bookId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "User Not Found"
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -131,7 +115,7 @@ router.get('/:bookId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "Internal Server Error"
  */
 router.post('/:bookId', async function (req, res) {
@@ -155,7 +139,7 @@ router.post('/:bookId', async function (req, res) {
  * @swagger
  * /review/{bookId}/{reviewId}:
  *   put:
- *     summary: 책에 리뷰를 수정합니다.
+ *     summary: Update a review for a book.
  *     tags: [Review]
  *     parameters:
  *       - in: path
@@ -163,13 +147,13 @@ router.post('/:bookId', async function (req, res) {
  *         required: true
  *         schema:
  *           type: string
- *         description: 책의 고유 ID
+ *         description: Unique book ID
  *       - in: path
  *         name: reviewId
  *         required: true
  *         schema:
  *           type: string
- *         description: 수정할 리뷰의 고유 ID
+ *         description: Unique ID of the review to update
  *     requestBody:
  *       required: true
  *       content:
@@ -179,11 +163,11 @@ router.post('/:bookId', async function (req, res) {
  *             properties:
  *               content:
  *                 type: string
- *                 description: 리뷰 텍스트
- *                 example: "수정된 리뷰입니다."
+ *                 description: Review text
+ *                 example: "This is an updated review."
  *     responses:
  *       200:
- *         description: 리뷰가 성공적으로 수정되었습니다.
+ *         description: Review updated successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -191,26 +175,26 @@ router.post('/:bookId', async function (req, res) {
  *               properties:
  *                 review:
  *                   type: object
- *                   description: 수정된 리뷰 정보
+ *                   description: Updated review details
  *                   properties:
  *                     bookId:
  *                       type: string
- *                       description: 책의 고유 ID
+ *                       description: Unique book ID
  *                       example: "123456789"
  *                     content:
  *                       type: string
- *                       description: 리뷰 텍스트
- *                       example: "수정된 리뷰입니다."
+ *                       description: Review text
+ *                       example: "This is an updated review."
  *                     userId:
  *                       type: string
- *                       description: 리뷰를 단 유저 ID
+ *                       description: ID of the user who wrote the review
  *                       example: 3
  *                 message:
  *                   type: string
- *                   description: 결과 메시지
+ *                   description: Result message
  *                   example: "Review is successfully updated"
  *       400:
- *         description: 사용자 정보를 찾을 수 없음
+ *         description: User information not found
  *         content:
  *           application/json:
  *             schema:
@@ -218,10 +202,10 @@ router.post('/:bookId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "User Not Found"
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -229,7 +213,7 @@ router.post('/:bookId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "Internal Server Error"
  */
 router.put('/:bookId/:reviewId', async function (req, res) {
@@ -255,7 +239,7 @@ router.put('/:bookId/:reviewId', async function (req, res) {
  * @swagger
  * /review/{bookId}/{reviewId}:
  *   delete:
- *     summary: 책에서 리뷰를 삭제합니다.
+ *     summary: Delete a review from a book.
  *     tags: [Review]
  *     parameters:
  *       - in: path
@@ -263,16 +247,16 @@ router.put('/:bookId/:reviewId', async function (req, res) {
  *         required: true
  *         schema:
  *           type: string
- *         description: 책의 고유 ID
+ *         description: Unique book ID
  *       - in: path
  *         name: reviewId
  *         required: true
  *         schema:
  *           type: string
- *         description: 삭제할 리뷰의 고유 ID
+ *         description: Unique ID of the review to delete
  *     responses:
  *       200:
- *         description: 리뷰가 성공적으로 삭제되었습니다.
+ *         description: Review deleted successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -280,10 +264,10 @@ router.put('/:bookId/:reviewId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 성공 메시지
+ *                   description: Success message
  *                   example: "Review is successfully deleted"
  *       400:
- *         description: 사용자 정보를 찾을 수 없음
+ *         description: User information not found
  *         content:
  *           application/json:
  *             schema:
@@ -291,10 +275,10 @@ router.put('/:bookId/:reviewId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "User Not Found"
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -302,7 +286,7 @@ router.put('/:bookId/:reviewId', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 에러 메시지
+ *                   description: Error message
  *                   example: "Internal Server Error"
  */
 router.delete('/:bookId/:reviewId', async function (req, res) {
