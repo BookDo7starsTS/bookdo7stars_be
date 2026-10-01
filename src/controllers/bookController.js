@@ -15,11 +15,11 @@ const router = express.Router();
  * @swagger
  * /book:
  *   get:
- *     summary: 데이터베이스에 있는 전체 도서 목록을 불러옵니다.
+ *     summary: Retrieve all books from the database.
  *     tags: [Get all books]
  *     responses:
  *       200:
- *         description: 전체 도서 목록이 성공적으로 불려졌습니다.
+ *         description: Book list loaded successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -27,7 +27,7 @@ const router = express.Router();
  *               properties:
  *                 books:
  *                   type: array
- *                   description: book 객체의 배열
+ *                   description: Array of book objects
  *                   example: [{
  *                      "title": "book1",
  *                      "isbn": "xxx",
@@ -44,10 +44,10 @@ const router = express.Router();
  *                    }]
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: Response message
  *                   example: Books loaded successfully
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -55,7 +55,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: Error loading Books
  */
 router.get('/', async function (req, res) {
@@ -74,12 +74,12 @@ router.get('/', async function (req, res) {
  * @swagger
  * /book/detail/12:
  *   get:
- *     summary: 유저가 요청한 도서 한 권을 DB에서 불러옵니다.
+ *     summary: Retrieve a requested book from the database.
  *     tags: [Get book detail]
  *
  *     responses:
  *       200:
- *         description: 유저가 요청한 도서 한 권을 DB에서 성공적으로 불러왔습니다.
+ *         description: Book detail loaded successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -87,7 +87,7 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 book:
  *                   type: object
- *                   description: book 객체
+ *                   description: Book object
  *                   example:
  *                     id: 12
  *                     isbn: "K012933265"
@@ -109,10 +109,10 @@ router.get('/', async function (req, res) {
  *                     deleted: false
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: Response message
  *                   example: Book detail loaded successfully
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -120,7 +120,7 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: Error loading book detail
  */
 
@@ -263,10 +263,10 @@ router.get('/mainpage', async function (req, res) {
  *                    }]
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: Response message
  *                   example: BestSeller Books by category Ids loaded successfully
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -274,7 +274,7 @@ router.get('/mainpage', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: Error loading BestSeller Books
  */
 router.get('/mainpage/bestseller', async function (req, res) {
@@ -566,7 +566,7 @@ router.get('/search/author', async function (req, res) {
  *               properties:
  *                 books:
  *                   type: array
- *                   description: book 객체의 배열
+ *                   description: Array of book objects
  *                   example: [{
  *                      "title": "book1",
  *                      "isbn": "xxx",
@@ -585,7 +585,7 @@ router.get('/search/author', async function (req, res) {
  *                    }]
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: Response message
  *                   example: Books loaded successfully
  *       400:
  *         description: Invalid CategoryId supplied

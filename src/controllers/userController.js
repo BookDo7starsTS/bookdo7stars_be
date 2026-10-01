@@ -15,7 +15,7 @@ const router = express.Router();
  * @swagger
  * /user:
  *   post:
- *     summary: 새로운 유저를 생성합니다.
+ *     summary: Create a new user.
  *     tags: [Create a user]
  *     requestBody:
  *       required: true
@@ -31,31 +31,31 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
- *                 description: 유저 이름
+ *                 description: User name
  *                 example: John Doe
  *               email:
  *                 type: string
- *                 description: 유저 이메일
+ *                 description: User email address
  *                 example: john.doe@example.com
  *               password:
  *                 type: string
- *                 description: 유저 비밀번호
+ *                 description: User password
  *                 example: Password123!
  *               mobile:
  *                 type: string
- *                 description: 유저 연락처
+ *                 description: User phone number
  *                 example: 010-1234-1234
  *               policyyn:
  *                 type: string
- *                 description: 정책동의여부
+ *                 description: Whether the user accepts the policy
  *                 example: "Y"
  *               address:
  *                 type: string
- *                 description: 유저 주소
+ *                 description: User address
  *                 example: "123 Main St"
  *     responses:
  *       201:
- *         description: 유저가 성공적으로 생성되었습니다.
+ *         description: User created successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -63,14 +63,14 @@ const router = express.Router();
  *               properties:
  *                 id:
  *                   type: integer
- *                   description: 생성된 유저의 ID
+ *                   description: ID of the created user
  *                   example: 1
  *                 message:
  *                   type: string
- *                   description: 응답 메세지
+ *                   description: Response message
  *                   example: User registered successfully
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -78,7 +78,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: Error registering user
  */
 router.post('/', async function (req, res) {
@@ -96,7 +96,7 @@ router.post('/', async function (req, res) {
  * @swagger
  * /user/login:
  *   post:
- *     summary: 유저를 로그인시킵니다.
+ *     summary: Sign in a user.
  *     tags: [sign in a user]
  *     requestBody:
  *       required: true
@@ -110,15 +110,15 @@ router.post('/', async function (req, res) {
  *             properties:
  *               email:
  *                 type: string
- *                 description: 유저 이메일
+ *                 description: User email address
  *                 example: john.123doe@example.com
  *               password:
  *                 type: string
- *                 description: 유저 비밀번호
+ *                 description: User password
  *                 example: Password123!
  *     responses:
  *       200:
- *         description: 로그인 성공했습니다.
+ *         description: User signed in successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -126,14 +126,14 @@ router.post('/', async function (req, res) {
  *               properties:
  *                 name:
  *                   type: string
- *                   description: 유저의 이름
+ *                   description: User name
  *                   example: John Doe
  *                 grade:
  *                   type: string
- *                   description: 회원 등급
+ *                   description: Membership grade
  *                   example: Bronze
  *       401:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -141,7 +141,7 @@ router.post('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 오류 메세지
+ *                   description: Error message
  *                   example: User not found or Incorrect Password
  */
 
@@ -210,13 +210,13 @@ router.get('/session', async function (req, res) {
  * @swagger
  * /user/logout:
  *   post:
- *     summary: 유저를 로그아웃시킵니다.
+ *     summary: Sign out the current user.
  *     tags: [sign out a user]
  *     requestBody:
  *       required: false
  *     responses:
  *       200:
- *         description: 로그아웃 성공했습니다.
+ *         description: User signed out successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -224,10 +224,10 @@ router.get('/session', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 로그아웃 성공 메시지
+ *                   description: Logout success message
  *                   example: Logout successful
  *       500:
- *         description: 서버 오류
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -235,7 +235,7 @@ router.get('/session', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: 로그 아웃 오류 메세지
+ *                   description: Logout error message
  *                   example: Error logging out
  */
 
