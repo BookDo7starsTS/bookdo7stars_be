@@ -1,17 +1,12 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import openapi from './openapi.js';
 
-// Swagger definition
 const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Express API',
-      version: '1.0.0',
-      description: 'BookDo7Stars backend API documentation.',
-    },
-  },
-  apis: ['./src/controllers/*Controller.js'],
+  definition: openapi,
+  // The OpenAPI document is maintained in config/openapi.js. Keeping this empty
+  // prevents legacy controller comments from creating duplicate or invalid paths.
+  apis: [],
 };
 
 const specs = swaggerJsdoc(options);
