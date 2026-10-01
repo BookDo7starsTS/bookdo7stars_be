@@ -1,17 +1,12 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import openapi from './openapi.js';
 
-// Swagger definition
 const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Express API',
-      version: '1.0.0',
-      description: '간단한 Express API입니다.',
-    },
-  },
-  apis: ['./src/controllers/userController.js', './src/controllers/bookController.js'], // API 라우트 파일을 지정합니다.
+  definition: openapi,
+  // The OpenAPI document is maintained in config/openapi.js. Keeping this empty
+  // prevents legacy controller comments from creating duplicate or invalid paths.
+  apis: [],
 };
 
 const specs = swaggerJsdoc(options);
