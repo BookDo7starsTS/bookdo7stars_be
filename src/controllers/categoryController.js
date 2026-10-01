@@ -14,11 +14,11 @@ const router = express.Router();
  * @swagger
  * /category:
  *   get:
- *     summary: Retrieve the category list from the database.
+ *     summary: 데이터베이스에 있는 카테고리 목록을 불러옵니다.
  *     tags: [Get all Categories]
  *     responses:
  *       200:
- *         description: Category list loaded successfully.
+ *         description: 카테고리 목록이 성공적으로 불려졌습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -26,7 +26,7 @@ const router = express.Router();
  *               properties:
  *                 categories:
  *                   type: object
- *                   description: Array of category objects
+ *                   description: category 배열
  *                   example: [{
  *                              "id": "1230",
  *                              "name": "가정/요리/뷰티",
@@ -43,7 +43,7 @@ const router = express.Router();
  *                             }]
  *
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -51,7 +51,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 오류 메세지
  *                   example: Error loading categories
  */
 router.get('/', async function (req, res) {

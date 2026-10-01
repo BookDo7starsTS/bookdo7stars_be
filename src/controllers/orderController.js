@@ -13,74 +13,61 @@ const router = express.Router();
  * @swagger
  * /order:
  *   post:
- *     summary: Create an order.
- *     tags: [Order]
+ *     summary: 책에 리뷰를 추가합니다.
+ *     tags: [Review]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - shipInfo
- *               - orderedItems
- *               - totalPrice
- *             properties:
- *               shipInfo:
- *                 type: object
- *                 required:
- *                   - name
- *                   - zipCode
- *                   - address1
- *                   - phone
- *                 properties:
- *                   name:
- *                     type: string
- *                     description: Recipient name
- *                   zipCode:
- *                     type: string
- *                     description: Postal code
- *                   address1:
- *                     type: string
- *                     description: Shipping address
- *                   phone:
- *                     type: string
- *                     description: Recipient phone number
- *               orderedItems:
- *                 type: array
- *                 description: Books and quantities to order
- *                 items:
- *                   type: object
- *                   properties:
- *                     book:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: integer
- *                           description: Unique book ID
- *                     quantity:
- *                       type: integer
- *                       description: Quantity to order
- *               totalPrice:
- *                 type: number
- *                 description: Total order price
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 bookId:
+ *                   type: string
+ *                   description: 책의 고유 ID
+ *                   example: "123456789"
+ *                 content:
+ *                   type: string
+ *                   description: 리뷰 텍스트
+ *                   example: "리뷰 입니다"
+ *                 userId:
+ *                   type: string
+ *                   description: 리뷰를 단 유저 ID
+ *                   example: 3
  *     responses:
  *       200:
- *         description: Order created successfully.
+ *         description: 리뷰가 책에 성공적으로 추가되었습니다.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 orderNumber:
- *                   type: string
- *                   description: Created order number
- *                 message:
- *                   type: string
- *                   description: Result message
- *                   example: "successfully ordered"
+ *                 reviews:
+ *                   type: array
+ *                   description: 추가된 리뷰들
+ *                   reviews:
+ *                     type: object
+ *                     properties:
+ *                       bookId:
+ *                          type: string
+ *                          description: 책의 고유 ID
+ *                          example: "123456789"
+ *                       content:
+ *                          type: string
+ *                          description: 리뷰 텍스트
+ *                          example: "리뷰 입니다"
+ *                       userId:
+ *                          type: string
+ *                          description: 리뷰를 단 유저 ID
+ *                          example: 3
+ *                    message:
+ *                      type: string
+ *                      description: 결과 메시지
+ *                      example: "Review is successfully added"
  *       400:
- *         description: User information not found
+ *         description: 사용자 정보를 찾을 수 없음
  *         content:
  *           application/json:
  *             schema:
@@ -88,10 +75,10 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "User Not Found"
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -99,7 +86,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "Internal Server Error"
  */
 router.post('/', async function (req, res) {

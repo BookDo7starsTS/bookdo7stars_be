@@ -14,11 +14,11 @@ const router = express.Router();
  * @swagger
  * /cart:
  *   get:
- *     summary: Retrieve the cart from the database.
+ *     summary: 데이터베이스에 있는 cart 목록을 불러옵니다.
  *     tags: [Get All Cart items]
  *     responses:
  *       200:
- *         description: Cart loaded successfully.
+ *         description: cart 목록이 성공적으로 불려졌습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -26,11 +26,11 @@ const router = express.Router();
  *               properties:
  *                 cart:
  *                   type: object
- *                   description: Array of cart items
+ *                   description: cart 배열
  *                   example: [{}]
  *
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -38,7 +38,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 오류 메세지
  *                   example: Error loading categories
  */
 router.get('/', async function (req, res) {
@@ -57,7 +57,7 @@ router.get('/', async function (req, res) {
  * @swagger
  * /cart:
  *   post:
- *     summary: Add items to the cart.
+ *     summary: 카트에 아이템들을 추가합니다.
  *     tags: [Cart]
  *     requestBody:
  *       required: true
@@ -70,15 +70,15 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 bookId:
  *                   type: string
- *                   description: Unique book ID
+ *                   description: 책의 고유 ID
  *                   example: "123456789"
  *                 quantity:
  *                   type: integer
- *                   description: Quantity to add
+ *                   description: 추가할 수량
  *                   example: 2
  *     responses:
  *       200:
- *         description: Items added to the cart successfully.
+ *         description: 아이템들이 카트에 성공적으로 추가되었습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -86,24 +86,24 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 cartItems:
  *                   type: array
- *                   description: Added cart items
+ *                   description: 추가된 카트 아이템들
  *                   items:
  *                     type: object
  *                     properties:
  *                       bookId:
  *                         type: string
- *                         description: Unique book ID
+ *                         description: 책의 고유 ID
  *                         example: "123456789"
  *                       quantity:
  *                         type: integer
- *                         description: Added quantity
+ *                         description: 추가된 수량
  *                         example: 2
  *                 message:
  *                   type: string
- *                   description: Result message
+ *                   description: 결과 메시지
  *                   example: "Selected books are successfully added"
  *       400:
- *         description: User information not found
+ *         description: 사용자 정보를 찾을 수 없음
  *         content:
  *           application/json:
  *             schema:
@@ -111,10 +111,10 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "User Not Found"
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -122,7 +122,7 @@ router.get('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "Internal Server Error"
  */
 router.post('/', async function (req, res) {
@@ -161,7 +161,7 @@ router.post('/', async function (req, res) {
  * @swagger
  * /cart/{id}:
  *   put:
- *     summary: Update the quantity of a cart item.
+ *     summary: 카트의 아이템 수량을 업데이트합니다.
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -169,7 +169,7 @@ router.post('/', async function (req, res) {
  *         required: true
  *         schema:
  *           type: string
- *         description: Book ID of the item to update
+ *         description: 업데이트할 아이템의 책 ID
  *     requestBody:
  *       required: true
  *       content:
@@ -179,11 +179,11 @@ router.post('/', async function (req, res) {
  *             properties:
  *               quantity:
  *                 type: integer
- *                 description: Quantity to update
+ *                 description: 업데이트할 수량
  *                 example: 3
  *     responses:
  *       200:
- *         description: Cart item updated successfully.
+ *         description: 아이템이 성공적으로 업데이트되었습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -191,22 +191,22 @@ router.post('/', async function (req, res) {
  *               properties:
  *                 cartItem:
  *                   type: object
- *                   description: Updated cart item
+ *                   description: 업데이트된 카트 아이템
  *                   properties:
  *                     bookId:
  *                       type: string
- *                       description: Unique book ID
+ *                       description: 책의 고유 ID
  *                       example: "123456789"
  *                     quantity:
  *                       type: integer
- *                       description: Updated quantity
+ *                       description: 업데이트된 수량
  *                       example: 3
  *                 message:
  *                   type: string
- *                   description: Result message
+ *                   description: 결과 메시지
  *                   example: "Book Title is updated successfully"
  *       400:
- *         description: User information not found
+ *         description: 사용자 정보를 찾을 수 없음
  *         content:
  *           application/json:
  *             schema:
@@ -214,10 +214,10 @@ router.post('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "User Not Found"
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -225,7 +225,7 @@ router.post('/', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "Error loading cart"
  */
 router.put('/:id', async function (req, res) {
@@ -250,7 +250,7 @@ router.put('/:id', async function (req, res) {
  * @swagger
  * /cart/{id}:
  *   delete:
- *     summary: Remove a specific item from the cart.
+ *     summary: 카트에서 특정 아이템을 삭제합니다.
  *     tags: [Cart]
  *     parameters:
  *       - in: path
@@ -258,10 +258,10 @@ router.put('/:id', async function (req, res) {
  *         required: true
  *         schema:
  *           type: string
- *         description: Book ID of the item to remove
+ *         description: 삭제할 아이템의 책 ID
  *     responses:
  *       200:
- *         description: Cart item removed successfully.
+ *         description: 아이템이 성공적으로 삭제되었습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -269,10 +269,10 @@ router.put('/:id', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Result message
+ *                   description: 결과 메시지
  *                   example: "successfully deleted!"
  *       400:
- *         description: User information not found
+ *         description: 사용자 정보를 찾을 수 없음
  *         content:
  *           application/json:
  *             schema:
@@ -280,10 +280,10 @@ router.put('/:id', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "User Not Found"
  *       500:
- *         description: Internal server error
+ *         description: 서버 오류
  *         content:
  *           application/json:
  *             schema:
@@ -291,7 +291,7 @@ router.put('/:id', async function (req, res) {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                   description: 에러 메시지
  *                   example: "Error loading cart"
  */
 router.delete('/:id', async function (req, res) {

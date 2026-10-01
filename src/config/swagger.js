@@ -8,10 +8,10 @@ const options = {
     info: {
       title: 'Express API',
       version: '1.0.0',
-      description: 'BookDo7Stars backend API documentation.',
+      description: '간단한 Express API입니다.',
     },
   },
-  apis: ['./src/controllers/*Controller.js'],
+  apis: ['./src/controllers/userController.js', './src/controllers/bookController.js'], // API 라우트 파일을 지정합니다.
 };
 
 const specs = swaggerJsdoc(options);
